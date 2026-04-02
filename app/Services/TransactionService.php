@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\Debt;
 use App\Models\Transaction;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -72,7 +74,7 @@ class TransactionService
         }
 
         if ($oldDebtId && $oldDebtId != $transaction->debt_id) {
-            $oldDebt = \App\Models\Debt::find($oldDebtId);
+            $oldDebt = Debt::find($oldDebtId);
             if ($oldDebt) {
                 app(DebtService::class)->syncRemainingAmount($oldDebt);
             }
@@ -90,7 +92,7 @@ class TransactionService
         DB::transaction(function () use ($transaction) {
             $debt = $transaction->debt;
             $transaction->delete();
-            
+
             if ($debt) {
                 app(DebtService::class)->syncRemainingAmount($debt);
             }
@@ -108,11 +110,11 @@ class TransactionService
         $expense = (clone $base)->expense()->sum('amount');
 
         return [
-            'income' => (float)$income,
-            'expense' => (float)$expense,
-            'net' => (float)$income - (float)$expense,
+            'income' => (float) $income,
+            'expense' => (float) $expense,
+            'net' => (float) $income - (float) $expense,
             'savings_rate' => $income > 0
-                ? round(((float)$income - (float)$expense) / (float)$income * 100, 1)
+                ? round(((float) $income - (float) $expense) / (float) $income * 100, 1)
                 : 0,
         ];
     }
@@ -120,7 +122,7 @@ class TransactionService
     /**
      * Expense breakdown by category for a given month.
      */
-    public function monthlyExpenseByCategory(int $userId, int $month, int $year): \Illuminate\Support\Collection
+    public function monthlyExpenseByCategory(int $userId, int $month, int $year): Collection
     {
         return Transaction::with('category')
             ->where('user_id', $userId)
@@ -130,17 +132,17 @@ class TransactionService
             ->groupBy('category_id')
             ->orderByDesc('total')
             ->get()
-            ->map(fn($row) => [
+            ->map(fn ($row) => [
                 'category' => $row->category?->name ?? 'Uncategorized',
                 'color' => $row->category?->color ?? '#94a3b8',
-                'total' => (float)$row->total,
+                'total' => (float) $row->total,
             ]);
     }
 
     /**
      * Daily expense totals for the current month (for sparklines/charts).
      */
-    public function dailyExpensesForMonth(int $userId, int $month, int $year): \Illuminate\Support\Collection
+    public function dailyExpensesForMonth(int $userId, int $month, int $year): Collection
     {
         return Transaction::where('user_id', $userId)
             ->expense()
@@ -162,7 +164,7 @@ class TransactionService
         if (
             $data['type'] === 'transfer' &&
             isset($data['to_account_id']) &&
-            (int)$data['account_id'] === (int)$data['to_account_id']
+            (int) $data['account_id'] === (int) $data['to_account_id']
         ) {
             throw ValidationException::withMessages([
                 'to_account_id' => 'Source and destination accounts must be different.',

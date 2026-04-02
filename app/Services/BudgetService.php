@@ -14,21 +14,30 @@ class BudgetService
     public function getBudgetBreakdown(int $userId, int $month, int $year): Collection
     {
         $budgets = Budget::where('user_id', $userId)
-            ->active()
+            ->activeForPeriod($month, $year)
             ->with('category')
             ->get();
 
-        return $budgets->map(function (Budget $budget) use ($month, $year) {
-            $spent = Transaction::where('user_id', $budget->user_id)
-                ->when($budget->category_id, fn($q) => $q->where('category_id', $budget->category_id))
-                ->expense()
-                ->whereMonth('transaction_date', $month)
-                ->whereYear('transaction_date', $year)
-                ->sum('amount');
+        if ($budgets->isEmpty()) {
+            return collect();
+        }
 
-            $amount = (float)$budget->amount;
-            $spent = (float)$spent;
-            
+        // Single query for all spending, keyed by category_id
+        $categoryIds = $budgets->pluck('category_id')->filter();
+
+        $spending = Transaction::where('user_id', $userId)
+            ->expense()
+            ->whereMonth('transaction_date', $month)
+            ->whereYear('transaction_date', $year)
+            ->whereIn('category_id', $categoryIds)
+            ->selectRaw('category_id, SUM(amount) as total')
+            ->groupBy('category_id')
+            ->pluck('total', 'category_id');
+
+        return $budgets->map(function (Budget $budget) use ($spending) {
+            $amount = (float) $budget->amount;
+            $spent = (float) ($spending[$budget->category_id] ?? 0);
+
             return [
                 'id' => $budget->id,
                 'category' => $budget->category?->name ?? 'All Categories',
@@ -47,7 +56,7 @@ class BudgetService
     public function getGlobalBudgetHealth(int $userId, int $month, int $year): array
     {
         $breakdown = $this->getBudgetBreakdown($userId, $month, $year);
-        
+
         $totalBudgeted = $breakdown->sum('budgeted_amount');
         $totalSpent = $breakdown->sum('spent_amount');
 

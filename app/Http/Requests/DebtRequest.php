@@ -24,7 +24,7 @@ class DebtRequest extends FormRequest
             'contact_name' => ['required', 'string', 'max:255'],
             'direction' => ['required', Rule::in(['lent', 'borrowed'])],
             'amount' => ['required', 'numeric', 'min:0.01'],
-            'remaining_amount' => ['required', 'numeric', 'min:0', 'max:' . $this->amount],
+            'remaining_amount' => ['required', 'numeric', 'min:0', 'max:'.$this->amount],
             'due_date' => ['nullable', 'date'],
             'note' => ['nullable', 'string'],
             'is_settled' => ['nullable', 'boolean'],

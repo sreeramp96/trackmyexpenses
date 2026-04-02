@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Transaction extends Model
 {
@@ -25,10 +25,10 @@ class Transaction extends Model
     ];
 
     protected $casts = [
-        'amount'           => 'decimal:2',
+        'amount' => 'decimal:2',
         'transaction_date' => 'date',
-        'is_reconciled'    => 'boolean',
-        'debt_id'          => 'integer',
+        'is_reconciled' => 'boolean',
+        'debt_id' => 'integer',
     ];
 
     // ── Relationships ──────────────────────────────────────

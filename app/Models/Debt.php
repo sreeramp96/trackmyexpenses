@@ -3,8 +3,8 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Debt extends Model
 {
@@ -63,7 +63,7 @@ class Debt extends Model
 
     public function isOverdue(): bool
     {
-        return !$this->is_settled
+        return ! $this->is_settled
             && $this->due_date
             && $this->due_date->isPast();
     }

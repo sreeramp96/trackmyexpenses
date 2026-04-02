@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\Models\Transaction;
 use App\Models\Account;
+use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 
 class AccountObserver
@@ -13,16 +13,17 @@ class AccountObserver
      */
     public function created(Transaction $transaction): void
     {
-        DB::transaction(function () use ($transaction) {
-
-            // If this is an UPDATE, reverse the previous balance effect first
-            if (!$transaction->wasRecentlyCreated) {
-                $this->reverseEffect($transaction->getOriginal());
-            }
-
-            // Apply the new / current transaction
-            $this->applyEffect($transaction);
-        });
+        //        DB::transaction(function () use ($transaction) {
+        //
+        //            // If this is an UPDATE, reverse the previous balance effect first
+        //            if (!$transaction->wasRecentlyCreated) {
+        //                $this->reverseEffect($transaction->getOriginal());
+        //            }
+        //
+        //            // Apply the new / current transaction
+        //            $this->applyEffect($transaction);
+        //        });
+        DB::transaction(fn () => $this->applyEffect($transaction));
     }
 
     /**
@@ -90,13 +91,13 @@ class AccountObserver
     private function credit(int $accountId, float|string $amount): void
     {
         Account::where('id', $accountId)
-            ->increment('balance', (float)$amount);
+            ->increment('balance', (float) $amount);
     }
 
     private function debit(int $accountId, float|string $amount): void
     {
         Account::where('id', $accountId)
-            ->decrement('balance', (float)$amount);
+            ->decrement('balance', (float) $amount);
     }
 
     private function transfer(int $fromId, int $toId, float|string $amount): void

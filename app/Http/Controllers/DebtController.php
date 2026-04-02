@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Debt;
 use App\Http\Requests\DebtRequest;
-use Illuminate\Http\Request;
+use App\Models\Debt;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 
 class DebtController extends Controller
 {
@@ -13,19 +13,22 @@ class DebtController extends Controller
 
     public function index(Request $request)
     {
-        $debts = $request->user()->debts()->get();
-        return response()->json($debts);
+        $debts = $request->user()->debts()->latest()->get();
+
+        return view('debts.index', compact('debts'));
     }
 
     public function store(DebtRequest $request)
     {
         $debt = $request->user()->debts()->create($request->validated());
+
         return response()->json($debt, 201);
     }
 
     public function show(Debt $debt)
     {
         $this->authorize('view', $debt);
+
         return response()->json($debt);
     }
 
@@ -33,6 +36,7 @@ class DebtController extends Controller
     {
         $this->authorize('update', $debt);
         $debt->update($request->validated());
+
         return response()->json($debt);
     }
 
@@ -40,6 +44,7 @@ class DebtController extends Controller
     {
         $this->authorize('delete', $debt);
         $debt->delete();
+
         return response()->json(null, 204);
     }
 }

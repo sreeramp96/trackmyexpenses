@@ -2,13 +2,13 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\Auth;
-
 class DashboardService
 {
-    protected $transactionService;
-    protected $budgetService;
-    protected $debtService;
+    protected TransactionService $transactionService;
+
+    protected BudgetService $budgetService;
+
+    protected DebtService $debtService;
 
     public function __construct(
         TransactionService $transactionService,

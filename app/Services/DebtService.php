@@ -4,7 +4,6 @@ namespace App\Services;
 
 use App\Models\Debt;
 use App\Models\Transaction;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
 
 class DebtService
@@ -20,9 +19,9 @@ class DebtService
         $toPay = (clone $base)->borrowed()->sum('remaining_amount');
 
         return [
-            'total_to_collect' => (float)$toCollect,
-            'total_to_pay' => (float)$toPay,
-            'net_debt' => (float)$toCollect - (float)$toPay,
+            'total_to_collect' => (float) $toCollect,
+            'total_to_pay' => (float) $toPay,
+            'net_debt' => (float) $toCollect - (float) $toPay,
             'unsettled_count' => (clone $base)->count(),
             'overdue_count' => (clone $base)->overdue()->count(),
         ];
@@ -43,8 +42,8 @@ class DebtService
                     'contact_name' => $debt->contact_name,
                     'direction' => $debt->direction,
                     'label' => $debt->label(),
-                    'original_amount' => (float)$debt->amount,
-                    'remaining_amount' => (float)$debt->remaining_amount,
+                    'original_amount' => (float) $debt->amount,
+                    'remaining_amount' => (float) $debt->remaining_amount,
                     'due_date' => $debt->due_date?->format('Y-m-d'),
                     'is_overdue' => $debt->isOverdue(),
                 ];
@@ -57,12 +56,19 @@ class DebtService
      */
     public function syncRemainingAmount(Debt $debt): void
     {
-        $paid = Transaction::where('debt_id', $debt->id)->sum('amount');
-        
-        $remaining = (float)$debt->amount - (float)$paid;
-        
+        $paid = Transaction::where('debt_id', $debt->id)
+            ->whereIn('type', ['expense', 'income']) // explicit — no transfers
+            ->sum('amount');
+
+        //        $remaining = (float)$debt->amount - (float)$paid;
+        $remaining = max(0, (float) $debt->amount - (float) $paid);
+
+        //        $debt->update([
+        //            'remaining_amount' => max(0, $remaining),
+        //            'is_settled' => $remaining <= 0,
+        //        ]);
         $debt->update([
-            'remaining_amount' => max(0, $remaining),
+            'remaining_amount' => $remaining,
             'is_settled' => $remaining <= 0,
         ]);
     }

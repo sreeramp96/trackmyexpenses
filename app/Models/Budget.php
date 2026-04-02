@@ -36,12 +36,21 @@ class Budget extends Model
 
     // ── Scopes ─────────────────────────────────────────────
 
-    public function scopeActive($query)
+    public function scopeActiveForPeriod($query, int $month, int $year)
     {
-        return $query->where('start_date', '<=', now())
-            ->where(function ($q) {
+        $periodStart = now()->setYear($year)->setMonth($month)->startOfMonth();
+        $periodEnd = $periodStart->copy()->endOfMonth();
+
+        //        return $query->where('start_date', '<=', now())
+        //            ->where(function ($q) {
+        //                $q->whereNull('end_date')
+        //                    ->orWhere('end_date', '>=', now());
+        //            });
+        return $query
+            ->where('start_date', '<=', $periodEnd)
+            ->where(function ($q) use ($periodStart) {
                 $q->whereNull('end_date')
-                    ->orWhere('end_date', '>=', now());
+                    ->orWhere('end_date', '>=', $periodStart);
             });
     }
 
@@ -51,7 +60,7 @@ class Budget extends Model
     {
         // Calculated in TransactionService — placeholder for relationship access
         return Transaction::where('user_id', $this->user_id)
-            ->when($this->category_id, fn($q) => $q->where('category_id', $this->category_id))
+            ->when($this->category_id, fn ($q) => $q->where('category_id', $this->category_id))
             ->expense()
             ->whereBetween('transaction_date', [$this->start_date, $this->end_date ?? now()])
             ->sum('amount');
@@ -59,12 +68,15 @@ class Budget extends Model
 
     public function remainingAmount(): float
     {
-        return max(0, (float)$this->amount - $this->spentAmount());
+        return max(0, (float) $this->amount - $this->spentAmount());
     }
 
     public function percentUsed(): float
     {
-        if ((float)$this->amount === 0.0) return 0;
-        return round(($this->spentAmount() / (float)$this->amount) * 100, 1);
+        if ((float) $this->amount === 0.0) {
+            return 0;
+        }
+
+        return round(($this->spentAmount() / (float) $this->amount) * 100, 1);
     }
 }

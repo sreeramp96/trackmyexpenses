@@ -1,3 +1,21 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    --c-bg:       #f5f4f0;
+    --c-surface:  #ffffff;
+    --c-surface2: #f9f8f5;
+    --c-surface3: #f0efe9;
+    --c-border:   #e2e0d8;
+    --c-border2:  #ccc9be;
+    --c-text:     #1a1916;
+    --c-text2:    #6b6860;
+    --c-text3:    #9b9890;
+    --c-green:    #166534;
+    --c-red:      #991b1b;
+    --c-amber:    #92400e;
+    --c-blue:     #1e3a5f;
+}
+/*body { font-family: 'IBM Plex Sans', sans-serif; background: var(--c-bg); }*/
+/*.font-mono { font-family: 'IBM Plex Mono', monospace; }*/

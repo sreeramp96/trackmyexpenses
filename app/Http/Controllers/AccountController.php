@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Account;
 use App\Http\Requests\AccountRequest;
-use Illuminate\Http\Request;
+use App\Models\Account;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 
 class AccountController extends Controller
 {
@@ -14,18 +14,21 @@ class AccountController extends Controller
     public function index(Request $request)
     {
         $accounts = $request->user()->accounts()->get();
-        return response()->json($accounts);
+
+        return view('accounts.index', compact('accounts'));
     }
 
     public function store(AccountRequest $request)
     {
         $account = $request->user()->accounts()->create($request->validated());
+
         return response()->json($account, 201);
     }
 
     public function show(Account $account)
     {
         $this->authorize('view', $account);
+
         return response()->json($account);
     }
 
@@ -33,6 +36,7 @@ class AccountController extends Controller
     {
         $this->authorize('update', $account);
         $account->update($request->validated());
+
         return response()->json($account);
     }
 
@@ -40,6 +44,7 @@ class AccountController extends Controller
     {
         $this->authorize('delete', $account);
         $account->delete();
+
         return response()->json(null, 204);
     }
 }

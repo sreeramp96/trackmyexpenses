@@ -2,10 +2,17 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
+use App\Models\Debt;
 use App\Models\Transaction;
 use App\Observers\AccountObserver;
+use App\Policies\DebtPolicy;
+use App\Services\BudgetService;
+use App\Services\DashboardService;
+use App\Services\DebtService;
+use App\Services\ReportService;
 use App\Services\TransactionService;
+use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -14,11 +21,11 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(\App\Services\TransactionService::class);
-        $this->app->singleton(\App\Services\BudgetService::class);
-        $this->app->singleton(\App\Services\DebtService::class);
-        $this->app->singleton(\App\Services\DashboardService::class);
-        $this->app->singleton(\App\Services\ReportService::class);
+        $this->app->singleton(TransactionService::class);
+        $this->app->singleton(BudgetService::class);
+        $this->app->singleton(DebtService::class);
+        $this->app->singleton(DashboardService::class);
+        $this->app->singleton(ReportService::class);
     }
 
     /**
@@ -26,6 +33,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Transaction::observe(AccountObserver::class);
+        Gate::policy(Debt::class, DebtPolicy::class);
         Transaction::observe(AccountObserver::class);
     }
 }
