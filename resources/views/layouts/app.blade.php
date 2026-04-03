@@ -71,6 +71,26 @@
                 Accounts
             </x-sidebar-link>
 
+            <x-sidebar-link :href="route('import.csv')" :active="request()->routeIs('import.csv')">
+                <x-slot name="icon">
+                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"
+                         stroke-linecap="round">
+                        <path d="M7 10V1M4 4l3-3 3 3M1 10v3h12v-3"/>
+                    </svg>
+                </x-slot>
+                Import CSV
+            </x-sidebar-link>
+
+            <x-sidebar-link :href="route('import.pdf')" :active="request()->routeIs('import.pdf')">
+                <x-slot name="icon">
+                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"
+                         stroke-linecap="round">
+                        <path d="M1 3h12v8a1 1 0 01-1 1H2a1 1 0 01-1-1V3zM4 1h6M1 6h12"/>
+                    </svg>
+                </x-slot>
+                Import PDF
+            </x-sidebar-link>
+
             <div class="h-px bg-edge my-2 mx-4"></div>
             <p class="px-4 pb-1 text-[10px] font-mono font-medium text-ink-3 uppercase tracking-widest">Planning</p>
 

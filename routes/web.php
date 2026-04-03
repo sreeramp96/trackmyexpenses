@@ -27,6 +27,9 @@ Route::middleware('auth')->group(function () {
     Route::resource('budgets', BudgetController::class);
     Route::resource('debts', DebtController::class);
 
+    Route::get('/import/csv', \App\Livewire\CsvImporter::class)->name('import.csv');
+    Route::get('/import/pdf', \App\Livewire\PdfImporter::class)->name('import.pdf');
+
     Route::get('/api/dashboard', [DashboardController::class, 'index'])->name('api.dashboard');
 });
 

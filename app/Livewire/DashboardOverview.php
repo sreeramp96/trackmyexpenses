@@ -53,19 +53,49 @@ class DashboardOverview extends Component
 
     public function render()
     {
-        $data = app(DashboardService::class)->getDashboardData(Auth::id(), $this->month, $this->year);
+        $data = app(DashboardService::class)->getDashboardData(Auth::id(), (int) $this->month, (int) $this->year);
         $recentTransactions = Auth::user()->transactions()
             ->with(['account', 'category'])
             ->latest('transaction_date')
             ->limit(8)
             ->get();
 
+        // Prepare charts
+        $dailySpendingLabels = $data['daily_trends']->keys()->map(fn ($d) => "Day $d")->toArray();
+        $dailySpendingData = $data['daily_trends']->values()->toArray();
+
+        $categoryLabels = collect($data['category_spending'])->pluck('category')->toArray();
+        $categoryData = collect($data['category_spending'])->pluck('total')->toArray();
+        $categoryColors = collect($data['category_spending'])->pluck('color')->toArray();
+
+        $historicalLabels = collect($data['historical_trends'])->pluck('label')->toArray();
+        $historicalIncome = collect($data['historical_trends'])->pluck('income')->toArray();
+        $historicalExpense = collect($data['historical_trends'])->pluck('expense')->toArray();
+
+        // Calculate Net Worth
+        $accountBalances = Auth::user()->accounts()->sum('balance');
+        $netWorth = (float) $accountBalances + $data['debts']['net_debt'];
+
         return view('livewire.dashboard-overview', array_merge($data, [
             'summary' => $data['summary'],
             'budgetHealth' => $data['budget_health'],
             'debtsSummary' => $data['debts'],
             'categorySpending' => $data['category_spending'],
-            'dailySparkline' => $data['daily_sparkline'],
+            'dailyTrends' => [
+                'labels' => $dailySpendingLabels,
+                'data' => $dailySpendingData,
+            ],
+            'categoryChart' => [
+                'labels' => $categoryLabels,
+                'data' => $categoryData,
+                'colors' => $categoryColors,
+            ],
+            'historicalChart' => [
+                'labels' => $historicalLabels,
+                'income' => $historicalIncome,
+                'expense' => $historicalExpense,
+            ],
+            'netWorth' => $netWorth,
             'budgets' => $data['budgets'],
             'activeDebts' => $data['active_debts'],
             'recentTransactions' => $recentTransactions,

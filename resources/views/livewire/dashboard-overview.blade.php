@@ -34,10 +34,10 @@
         </button>
     </x-slot>
 
-    <div class="p-5 space-y-4">
+    <div class="p-5 space-y-6">
         {{-- KPI strip --}}
         <div
-            class="grid grid-cols-2 md:grid-cols-4 border border-edge rounded overflow-hidden divide-x divide-y md:divide-y-0 divide-edge">
+            class="grid grid-cols-2 md:grid-cols-5 border border-edge rounded overflow-hidden divide-x divide-y md:divide-y-0 divide-edge">
             <x-kpi-card label="Income" :value="'₹'.number_format($summary['income'],2)" color="green"
                         :sub="date('M Y',mktime(0,0,0,$month,1,$year))">
                 <x-slot name="icon">
@@ -70,6 +70,76 @@
                     </svg>
                 </x-slot>
             </x-kpi-card>
+            <x-kpi-card label="Net Worth" :value="'₹'.number_format($netWorth,0)" color="default"
+                        :sub="'Assets - Liabilities'">
+                <x-slot name="icon">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3"/>
+                    </svg>
+                </x-slot>
+            </x-kpi-card>
+        </div>
+
+        {{-- Spending Trends Chart --}}
+        <x-panel title="Daily Spending Trends — {{ date('F Y', mktime(0,0,0,$month,1,$year)) }}" color="blue">
+            <div class="p-4 h-[300px] font-sans">
+                <x-chart type="line" :labels="$dailyTrends['labels']" :datasets="[
+                    [
+                        'label' => 'Expenses',
+                        'data' => $dailyTrends['data'],
+                        'borderColor' => '#991b1b',
+                        'backgroundColor' => 'rgba(153, 27, 27, 0.1)',
+                        'fill' => true,
+                        'tension' => 0.4,
+                    ]
+                ]" :options="[
+                    'scales' => [
+                        'y' => ['beginAtZero' => true, 'grid' => ['display' => false]],
+                        'x' => ['grid' => ['display' => false]]
+                    ]
+                ]" />
+            </div>
+        </x-panel>
+
+        {{-- Analysis Row --}}
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <x-panel title="Category Breakdown" color="green">
+                <div class="p-4 h-[300px]">
+                    <x-chart type="doughnut" :labels="$categoryChart['labels']" :datasets="[
+                        [
+                            'data' => $categoryChart['data'],
+                            'backgroundColor' => $categoryChart['colors'],
+                            'borderWidth' => 0,
+                        ]
+                    ]" :options="[
+                        'plugins' => [
+                            'legend' => ['position' => 'right', 'labels' => ['boxWidth' => 12, 'font' => ['family' => 'IBM Plex Mono', 'size' => 10]]]
+                        ]
+                    ]" />
+                </div>
+            </x-panel>
+
+            <x-panel title="Income vs Expense (Last 6 Months)" color="blue">
+                <div class="p-4 h-[300px]">
+                    <x-chart type="bar" :labels="$historicalChart['labels']" :datasets="[
+                        [
+                            'label' => 'Income',
+                            'data' => $historicalChart['income'],
+                            'backgroundColor' => '#166534',
+                        ],
+                        [
+                            'label' => 'Expense',
+                            'data' => $historicalChart['expense'],
+                            'backgroundColor' => '#991b1b',
+                        ]
+                    ]" :options="[
+                        'scales' => [
+                            'y' => ['beginAtZero' => true, 'grid' => ['display' => false]],
+                            'x' => ['grid' => ['display' => false]]
+                        ]
+                    ]" />
+                </div>
+            </x-panel>
         </div>
 
         {{-- Main grid --}}

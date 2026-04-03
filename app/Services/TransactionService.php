@@ -141,17 +141,44 @@ class TransactionService
 
     /**
      * Daily expense totals for the current month (for sparklines/charts).
+     * Ensures all days of the month are represented.
      */
     public function dailyExpensesForMonth(int $userId, int $month, int $year): Collection
     {
-        return Transaction::where('user_id', $userId)
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
+        $expenses = Transaction::where('user_id', $userId)
             ->expense()
             ->forMonth($month, $year)
             ->selectRaw('DAY(transaction_date) as day, SUM(amount) as total')
             ->groupBy('day')
-            ->orderBy('day')
             ->get()
             ->pluck('total', 'day');
+
+        $fullMonth = collect();
+        for ($i = 1; $i <= $daysInMonth; $i++) {
+            $fullMonth->put($i, (float) ($expenses[$i] ?? 0));
+        }
+
+        return $fullMonth;
+    }
+
+    /**
+     * Historical monthly income/expense totals for trend analysis.
+     */
+    public function historicalMonthlyTotals(int $userId, int $months = 6): array
+    {
+        $data = [];
+        for ($i = $months - 1; $i >= 0; $i--) {
+            $date = now()->subMonths($i);
+            $summary = $this->monthlySummary($userId, $date->month, $date->year);
+            $data[] = [
+                'label' => $date->format('M Y'),
+                'income' => $summary['income'],
+                'expense' => $summary['expense'],
+            ];
+        }
+
+        return $data;
     }
 
     // ── Private Guards ─────────────────────────────────────
