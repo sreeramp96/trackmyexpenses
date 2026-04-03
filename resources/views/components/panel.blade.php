@@ -10,7 +10,7 @@
 @endphp
 <div class="bg-surface border border-edge rounded-lg overflow-hidden shadow-sm hover:shadow transition-shadow">
     <div class="flex items-center justify-between px-4 py-2.5 border-b {{ $s }}">
-        <span class="text-[10px] font-mono font-bold uppercase tracking-widest">{{ $title }}</span>
+        <span class="text-[10px] font-sans font-bold uppercase tracking-widest">{{ $title }}</span>
         @if($action)
             <div class="flex items-center gap-2">{{ $action }}</div>
         @endif

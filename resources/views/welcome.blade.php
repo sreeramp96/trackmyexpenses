@@ -47,7 +47,6 @@
         .delay-200 { animation-delay: 0.2s; }
         .delay-300 { animation-delay: 0.3s; }
         .delay-400 { animation-delay: 0.4s; }
-        .delay-500 { animation-delay: 0.5s; }
         .gradient-text {
             background: linear-gradient(135deg, #1e3a5f 0%, #166534 100%);
             -webkit-background-clip: text;
