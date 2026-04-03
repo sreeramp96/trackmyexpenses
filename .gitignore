@@ -55,10 +55,6 @@ yarn-error.log
 /GEMINI.md
 /.agents/skills/laravel-best-practices/rules/http-client.md
 /.github/skills/laravel-best-practices/rules/http-client.md
-/resources/views/accounts/index.blade.php
-/resources/views/budgets/index.blade.php
-/resources/views/debts/index.blade.php
-/resources/views/transactions/index.blade.php
 /.agents/skills/livewire-development/reference/javascript-hooks.md
 /.github/skills/livewire-development/reference/javascript-hooks.md
 /.agents/skills/laravel-best-practices/rules/mail.md
