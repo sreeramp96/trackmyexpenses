@@ -34,7 +34,7 @@ class TransactionController extends Controller
         $data = $request->validated();
         $data['user_id'] = $request->user()->id;
 
-        $transaction = $this->transactionService->create($data);
+        $transaction = $request->user()->transactions()->create();
 
         return response()->json($transaction, 201);
     }

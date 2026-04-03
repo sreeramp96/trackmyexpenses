@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Account;
 use App\Models\Category;
 use App\Services\CategorizationService;
 use App\Services\ImportService;
@@ -16,15 +15,22 @@ class CsvImporter extends Component
     use WithFileUploads;
 
     public $file;
+
     public $step = 1; // 1: Upload, 2: Map, 3: Preview
+
     public $headers = [];
+
     public $rows = [];
+
     public $accountId;
-    
+
     // Mapping
     public $mapDate;
+
     public $mapDescription;
+
     public $mapDebit;
+
     public $mapCredit;
 
     public $previewData = [];
@@ -53,11 +59,13 @@ class CsvImporter extends Component
         foreach ($this->rows as $row) {
             $debit = $importService->parseCurrency($row[$this->mapDebit] ?? null);
             $credit = $importService->parseCurrency($row[$this->mapCredit] ?? null);
-            
+
             $type = $credit > 0 ? 'income' : 'expense';
             $amount = $credit > 0 ? $credit : $debit;
-            
-            if ($amount <= 0) continue;
+
+            if ($amount <= 0) {
+                continue;
+            }
 
             $description = $row[$this->mapDescription];
             $suggestedCatId = $catService->suggestCategoryId($description, Auth::id());
@@ -87,6 +95,7 @@ class CsvImporter extends Component
         }
 
         session()->flash('success', "Successfully imported $count transactions.");
+
         return redirect()->route('transactions.index');
     }
 

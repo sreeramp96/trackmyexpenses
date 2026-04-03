@@ -35,6 +35,7 @@ class DashboardOverview extends Component
         $key = 'csv-dl:'.Auth::id();
         if (RateLimiter::tooManyAttempts($key, 10)) {
             session()->flash('error', 'Too many downloads. Please wait a minute.');
+
             return;
         }
 

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use App\Models\Debt;
 use App\Models\Transaction;
-use App\Observers\AccountObserver;
+use App\Observers\TransactionObserver;
 use App\Policies\DebtPolicy;
 use App\Services\BudgetService;
 use App\Services\DashboardService;
@@ -33,8 +33,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Transaction::observe(AccountObserver::class);
+        Transaction::observe(TransactionObserver::class);
         Gate::policy(Debt::class, DebtPolicy::class);
-        Transaction::observe(AccountObserver::class);
     }
 }

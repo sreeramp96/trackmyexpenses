@@ -16,8 +16,8 @@ class DashboardController extends Controller
 
     public function index(Request $request)
     {
-        $month = $request->integer('month', (int)now()->month);
-        $year = $request->integer('year', (int)now()->year);
+        $month = $request->integer('month', (int) now()->month);
+        $year = $request->integer('year', (int) now()->year);
 
         $data = $this->dashboardService->getDashboardData(
             $request->user()->id,

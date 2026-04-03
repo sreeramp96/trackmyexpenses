@@ -6,23 +6,13 @@ use App\Models\Account;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\DB;
 
-class AccountObserver
+class TransactionObserver
 {
     /**
      * Handle the Transaction "created" event.
      */
     public function created(Transaction $transaction): void
     {
-        //        DB::transaction(function () use ($transaction) {
-        //
-        //            // If this is an UPDATE, reverse the previous balance effect first
-        //            if (!$transaction->wasRecentlyCreated) {
-        //                $this->reverseEffect($transaction->getOriginal());
-        //            }
-        //
-        //            // Apply the new / current transaction
-        //            $this->applyEffect($transaction);
-        //        });
         DB::transaction(fn () => $this->applyEffect($transaction));
     }
 

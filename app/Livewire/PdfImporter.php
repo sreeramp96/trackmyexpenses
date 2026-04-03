@@ -2,7 +2,6 @@
 
 namespace App\Livewire;
 
-use App\Models\Account;
 use App\Models\Category;
 use App\Services\PdfImportService;
 use App\Services\TransactionService;
@@ -15,8 +14,11 @@ class PdfImporter extends Component
     use WithFileUploads;
 
     public $file;
+
     public $step = 1; // 1: Upload, 2: Preview
+
     public $accountId;
+
     public $previewData = [];
 
     public function updatedFile()
@@ -30,14 +32,14 @@ class PdfImporter extends Component
     {
         $path = $this->file->getRealPath();
         $pdfService = app(PdfImportService::class);
-        
+
         $this->previewData = $pdfService->parseHdfcStatement($path, Auth::id())->toArray();
     }
 
     public function import()
     {
         $this->validate(['accountId' => 'required']);
-        
+
         $txService = app(TransactionService::class);
         $count = 0;
 
@@ -49,6 +51,7 @@ class PdfImporter extends Component
         }
 
         session()->flash('success', "Successfully imported $count transactions from PDF.");
+
         return redirect()->route('transactions.index');
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\BudgetRequest;
 use App\Models\Budget;
+use App\Services\BudgetService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 
@@ -13,7 +14,7 @@ class BudgetController extends Controller
 
     protected $budgetService;
 
-    public function __construct(\App\Services\BudgetService $budgetService)
+    public function __construct(BudgetService $budgetService)
     {
         $this->budgetService = $budgetService;
     }

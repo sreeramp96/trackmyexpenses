@@ -12,10 +12,9 @@ class DashboardService
 
     public function __construct(
         TransactionService $transactionService,
-        BudgetService      $budgetService,
-        DebtService        $debtService
-    )
-    {
+        BudgetService $budgetService,
+        DebtService $debtService
+    ) {
         $this->transactionService = $transactionService;
         $this->budgetService = $budgetService;
         $this->debtService = $debtService;

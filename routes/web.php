@@ -2,12 +2,14 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\BudgetController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\DebtController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
+use App\Livewire\CategoryManager;
+use App\Livewire\CsvImporter;
 use App\Livewire\DashboardOverview;
+use App\Livewire\PdfImporter;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -23,12 +25,12 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('accounts', AccountController::class);
     Route::resource('transactions', TransactionController::class);
-    Route::resource('categories', CategoryController::class);
+    Route::get('/categories', CategoryManager::class)->name('categories.index');
     Route::resource('budgets', BudgetController::class);
     Route::resource('debts', DebtController::class);
 
-    Route::get('/import/csv', \App\Livewire\CsvImporter::class)->name('import.csv');
-    Route::get('/import/pdf', \App\Livewire\PdfImporter::class)->name('import.pdf');
+    Route::get('/import/csv', CsvImporter::class)->name('import.csv');
+    Route::get('/import/pdf', PdfImporter::class)->name('import.pdf');
 
     Route::get('/api/dashboard', [DashboardController::class, 'index'])->name('api.dashboard');
 });

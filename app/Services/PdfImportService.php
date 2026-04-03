@@ -2,9 +2,9 @@
 
 namespace App\Services;
 
-use Smalot\PdfParser\Parser;
-use Illuminate\Support\Collection;
 use Carbon\Carbon;
+use Illuminate\Support\Collection;
+use Smalot\PdfParser\Parser;
 
 class PdfImportService
 {
@@ -13,17 +13,17 @@ class PdfImportService
      */
     public function parseHdfcStatement(string $path, int $userId): Collection
     {
-        $parser = new Parser();
+        $parser = new Parser;
         $pdf = $parser->parseFile($path);
         $text = $pdf->getText();
-        
+
         $transactions = collect();
         $catService = app(CategorizationService::class);
 
         // Typical HDFC line: 01/03/26 DESCRIPTION 1,234.56 0.00 10,000.00
         // This regex is a simplified heuristic for HDFC-like layouts
         $lines = explode("\n", $text);
-        
+
         foreach ($lines as $line) {
             // Match Date (dd/mm/yy) + Description + Withdrawal + Deposit
             // Regex: (\d{2}/\d{2}/\d{2})\s+(.+?)\s+([\d,]+\.\d{2})\s+([\d,]+\.\d{2})
@@ -33,7 +33,9 @@ class PdfImportService
                 $withdrawal = (float) str_replace(',', '', $matches[3]);
                 $deposit = (float) str_replace(',', '', $matches[4]);
 
-                if ($withdrawal == 0 && $deposit == 0) continue;
+                if ($withdrawal == 0 && $deposit == 0) {
+                    continue;
+                }
 
                 $type = $deposit > 0 ? 'income' : 'expense';
                 $amount = $deposit > 0 ? $deposit : $withdrawal;

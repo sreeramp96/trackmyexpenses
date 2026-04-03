@@ -13,13 +13,14 @@ class ImportService
     public function parseCsv(string $path): Collection
     {
         $rows = [];
-        if (($handle = fopen($path, "r")) !== FALSE) {
-            $headers = fgetcsv($handle, 1000, ",");
-            while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
+        if (($handle = fopen($path, 'r')) !== false) {
+            $headers = fgetcsv($handle, 1000, ',');
+            while (($data = fgetcsv($handle, 1000, ',')) !== false) {
                 $rows[] = array_combine($headers, $data);
             }
             fclose($handle);
         }
+
         return collect($rows);
     }
 
@@ -28,10 +29,13 @@ class ImportService
      */
     public function parseCurrency(?string $value): float
     {
-        if (empty($value)) return 0.0;
-        
+        if (empty($value)) {
+            return 0.0;
+        }
+
         // Remove symbols, commas and other non-numeric chars except dot
         $clean = preg_replace('/[^\d.]/', '', $value);
+
         return (float) $clean;
     }
 

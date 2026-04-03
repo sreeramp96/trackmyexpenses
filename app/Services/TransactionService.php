@@ -12,7 +12,7 @@ class TransactionService
 {
     /**
      * Create a new transaction.
-     * The AccountObserver automatically updates balances after save.
+     * The TransactionObserver automatically updates balances after save.
      *
      * @throws ValidationException
      */

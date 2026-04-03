@@ -71,6 +71,15 @@
                 Accounts
             </x-sidebar-link>
 
+            <x-sidebar-link :href="route('categories.index')" :active="request()->routeIs('categories.*')">
+                <x-slot name="icon">
+                    <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                        <path d="M1 4h5l1 1h6v6a1 1 0 01-1 1H2a1 1 0 01-1-1V4z"/>
+                    </svg>
+                </x-slot>
+                Categories
+            </x-sidebar-link>
+
             <x-sidebar-link :href="route('import.csv')" :active="request()->routeIs('import.csv')">
                 <x-slot name="icon">
                     <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5"
@@ -116,15 +125,25 @@
             </x-sidebar-link>
         </nav>
 
-        <div class="border-t border-edge px-4 py-3 flex items-center gap-2">
-            <div
-                class="w-7 h-7 rounded-full bg-surface-3 border border-edge-2 flex items-center justify-center text-[10px] font-mono font-medium text-ink-2 shrink-0">
-                {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+        <div class="border-t border-edge px-4 py-3 flex items-center justify-between group">
+            <div class="flex items-center gap-2 min-w-0">
+                <div
+                    class="w-7 h-7 rounded-full bg-surface-3 border border-edge-2 flex items-center justify-center text-[10px] font-mono font-medium text-ink-2 shrink-0">
+                    {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
+                </div>
+                <div class="min-w-0">
+                    <p class="text-xs font-medium truncate">{{ Auth::user()->name }}</p>
+                    <p class="text-[10px] text-ink-3 truncate">{{ Auth::user()->email }}</p>
+                </div>
             </div>
-            <div class="min-w-0">
-                <p class="text-xs font-medium truncate">{{ Auth::user()->name }}</p>
-                <p class="text-[10px] text-ink-3 truncate">{{ Auth::user()->email }}</p>
-            </div>
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit" class="text-ink-3 hover:text-finance-red transition-colors p-1" title="Log out">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M19 12l-3 3m3-3l-3-3m3 3H9" />
+                    </svg>
+                </button>
+            </form>
         </div>
     </aside>
 
