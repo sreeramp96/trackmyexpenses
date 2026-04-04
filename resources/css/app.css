@@ -17,5 +17,60 @@
     --c-amber:    #92400e;
     --c-blue:     #1e3a5f;
 }
-/*body { font-family: 'IBM Plex Sans', sans-serif; background: var(--c-bg); }*/
-/*.font-mono { font-family: 'IBM Plex Mono', monospace; }*/
+
+@layer utilities {
+    .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+        height: 4px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: var(--c-border2);
+        border-radius: 10px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: var(--c-text3);
+    }
+
+    @keyframes skeleton-pulse {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+    .skeleton-pulse {
+        animation: skeleton-pulse 1.5s infinite;
+    }
+}
+
+.bg-canvas { background-color: var(--c-bg); }
+.bg-surface { background-color: var(--c-surface); }
+.bg-surface-2 { background-color: var(--c-surface2); }
+.bg-surface-3 { background-color: var(--c-surface3); }
+.border-edge { border-color: var(--c-border); }
+.border-edge-2 { border-color: var(--c-border2); }
+.text-ink { color: var(--c-text); }
+.text-ink-2 { color: var(--c-text2); }
+.text-ink-3 { color: var(--c-text3); }
+.bg-ink { background-color: var(--c-text); }
+.bg-ink-2 { background-color: var(--c-text2); }
+
+.text-finance-green { color: var(--c-green); }
+.bg-finance-green { background-color: var(--c-green); }
+.bg-finance-green-bg { background-color: #f0fdf4; }
+.border-finance-green-border { border-color: #bcf0da; }
+
+.text-finance-red { color: var(--c-red); }
+.bg-finance-red { background-color: var(--c-red); }
+.bg-finance-red-bg { background-color: #fef2f2; }
+.border-finance-red-border { border-color: #fecaca; }
+
+.text-finance-amber { color: var(--c-amber); }
+.bg-finance-amber { background-color: var(--c-amber); }
+.bg-finance-amber-bg { background-color: #fffbeb; }
+.border-finance-amber-border { border-color: #fef3c7; }
+
+.text-finance-blue { color: var(--c-blue); }
+.bg-finance-blue { background-color: var(--c-blue); }
+.bg-finance-blue-bg { background-color: #eff6ff; }
+.border-finance-blue-border { border-color: #dbeafe; }

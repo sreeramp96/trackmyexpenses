@@ -1,17 +1,5 @@
 <div>
     <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6 pt-6">
-        @if (session()->has('error'))
-            <div class="bg-finance-red-bg border border-finance-red-border text-finance-red px-4 py-2 text-xs rounded mb-4" role="alert">
-                <span class="block sm:inline">{{ session('error') }}</span>
-            </div>
-        @endif
-
-        @if (session()->has('success'))
-            <div class="bg-finance-green-bg border border-finance-green-border text-finance-green px-4 py-2 text-xs rounded mb-4" role="alert">
-                <span class="block sm:inline">{{ session('success') }}</span>
-            </div>
-        @endif
-
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             @foreach(['income', 'expense', 'transfer'] as $t)
                 <x-panel wire:key="panel-{{ $t }}" :title="ucfirst($t) . ' Categories'" :color="$t === 'income' ? 'green' : ($t === 'expense' ? 'red' : 'blue')">

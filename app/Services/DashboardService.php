@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use Illuminate\Support\Facades\Cache;
+
 class DashboardService
 {
     protected TransactionService $transactionService;
@@ -22,18 +24,20 @@ class DashboardService
 
     public function getDashboardData(int $userId, ?int $month = null, ?int $year = null): array
     {
-        $month = $month ?? now()->month;
-        $year = $year ?? now()->year;
+        $month = $month ?? (int) now()->month;
+        $year = $year ?? (int) now()->year;
 
-        return [
-            'summary' => $this->transactionService->monthlySummary($userId, $month, $year),
-            'budget_health' => $this->budgetService->getGlobalBudgetHealth($userId, $month, $year),
-            'debts' => $this->debtService->getDebtSummary($userId),
-            'category_spending' => $this->transactionService->monthlyExpenseByCategory($userId, $month, $year),
-            'daily_trends' => $this->transactionService->dailyExpensesForMonth($userId, $month, $year),
-            'historical_trends' => $this->transactionService->historicalMonthlyTotals($userId),
-            'budgets' => $this->budgetService->getBudgetBreakdown($userId, $month, $year)->take(5),
-            'active_debts' => $this->debtService->getActiveDebts($userId)->take(5),
-        ];
+        return Cache::remember("dash:{$userId}:{$month}:{$year}", 300, function () use ($userId, $month, $year) {
+            return [
+                'summary' => $this->transactionService->monthlySummary($userId, $month, $year),
+                'budget_health' => $this->budgetService->getGlobalBudgetHealth($userId, $month, $year),
+                'debts' => $this->debtService->getDebtSummary($userId),
+                'category_spending' => $this->transactionService->monthlyExpenseByCategory($userId, $month, $year),
+                'daily_trends' => $this->transactionService->dailyExpensesForMonth($userId, $month, $year),
+                'historical_trends' => $this->transactionService->historicalMonthlyTotals($userId),
+                'budgets' => $this->budgetService->getBudgetBreakdown($userId, $month, $year)->take(5),
+                'active_debts' => $this->debtService->getActiveDebts($userId)->take(5),
+            ];
+        });
     }
 }

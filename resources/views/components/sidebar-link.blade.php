@@ -4,7 +4,10 @@
     ($active
       ? 'bg-finance-blue/5 text-finance-blue font-semibold border-finance-blue'
       : 'text-ink-2 border-transparent hover:bg-surface-2 hover:text-ink hover:border-edge')
-]) }}>
-    <span class="w-4 h-4 shrink-0 {{ $active ? 'text-finance-blue' : 'text-ink-3' }}">{{ $icon }}</span>
-    <span class="truncate">{{ $slot }}</span>
+]) }}
+:class="collapsed ? 'justify-center border-l-0' : ''"
+x-tooltip.placement.right="collapsed ? '{{ $slot }}' : ''"
+>
+    <span class="w-4 h-4 shrink-0 transition-transform duration-200 {{ $active ? 'text-finance-blue' : 'text-ink-3' }}" :class="collapsed ? 'scale-110' : ''">{{ $icon }}</span>
+    <span class="truncate transition-opacity duration-200" :class="collapsed ? 'hidden md:hidden lg:hidden' : 'block'">{{ $slot }}</span>
 </a>

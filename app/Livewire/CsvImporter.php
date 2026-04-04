@@ -7,6 +7,7 @@ use App\Services\CategorizationService;
 use App\Services\ImportService;
 use App\Services\TransactionService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -37,9 +38,18 @@ class CsvImporter extends Component
 
     public function updatedFile()
     {
+        $this->validate(['file' => 'required|mimes:csv,txt|max:2048']);
         $path = $this->file->getRealPath();
         $importService = app(ImportService::class);
         $this->rows = $importService->parseCsv($path)->toArray();
+
+        if (count($this->rows) > 5000) {
+            $this->reset(['file', 'rows']);
+            session()->flash('error', 'The CSV file is too large (maximum 5000 rows allowed).');
+
+            return;
+        }
+
         $this->headers = array_keys($this->rows[0] ?? []);
         $this->step = 2;
     }
@@ -85,18 +95,28 @@ class CsvImporter extends Component
 
     public function import()
     {
-        $txService = app(TransactionService::class);
-        $count = 0;
+        $executed = RateLimiter::attempt(
+            'tx-import:' . Auth::id(),
+            $maxAttempts = 60,
+            function () {
+                $txService = app(TransactionService::class);
+                $count = 0;
 
-        foreach ($this->previewData as $data) {
-            $data['user_id'] = Auth::id();
-            $txService->create($data);
-            $count++;
+                foreach ($this->previewData as $data) {
+                    $data['user_id'] = Auth::id();
+                    $txService->create($data);
+                    $count++;
+                }
+
+                session()->flash('success', "Successfully imported $count transactions.");
+
+                return redirect()->route('transactions.index');
+            }
+        );
+
+        if (!$executed) {
+            session()->flash('error', 'Too many import requests. Please slow down.');
         }
-
-        session()->flash('success', "Successfully imported $count transactions.");
-
-        return redirect()->route('transactions.index');
     }
 
     public function render()

@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\Debt;
 use App\Models\Transaction;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -39,6 +40,8 @@ class TransactionService
                 app(DebtService::class)->syncRemainingAmount($transaction->debt);
             }
 
+            $this->clearDashboardCache($transaction->user_id, $transaction->transaction_date);
+
             return $transaction;
         });
     }
@@ -51,6 +54,7 @@ class TransactionService
     {
         $this->validateTransferAccounts($data);
         $oldDebtId = $transaction->debt_id;
+        $oldDate = $transaction->transaction_date;
 
         DB::transaction(function () use ($transaction, $data) {
             $transaction->update([
@@ -80,6 +84,11 @@ class TransactionService
             }
         }
 
+        $this->clearDashboardCache($transaction->user_id, $transaction->transaction_date);
+        if ($oldDate->format('Y-m') !== $transaction->transaction_date->format('Y-m')) {
+            $this->clearDashboardCache($transaction->user_id, $oldDate);
+        }
+
         return $transaction;
     }
 
@@ -89,6 +98,9 @@ class TransactionService
      */
     public function delete(Transaction $transaction): void
     {
+        $userId = $transaction->user_id;
+        $date = $transaction->transaction_date;
+
         DB::transaction(function () use ($transaction) {
             $debt = $transaction->debt;
             $transaction->delete();
@@ -97,6 +109,16 @@ class TransactionService
                 app(DebtService::class)->syncRemainingAmount($debt);
             }
         });
+
+        $this->clearDashboardCache($userId, $date);
+    }
+
+    private function clearDashboardCache(int $userId, $date): void
+    {
+        $month = $date instanceof \Carbon\Carbon ? $date->month : (is_string($date) ? \Carbon\Carbon::parse($date)->month : $date->month);
+        $year = $date instanceof \Carbon\Carbon ? $date->year : (is_string($date) ? \Carbon\Carbon::parse($date)->year : $date->year);
+
+        Cache::forget("dash:{$userId}:{$month}:{$year}");
     }
 
     /**

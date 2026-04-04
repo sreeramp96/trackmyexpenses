@@ -35,5 +35,11 @@ class AppServiceProvider extends ServiceProvider
     {
         Transaction::observe(TransactionObserver::class);
         Gate::policy(Debt::class, DebtPolicy::class);
+
+        // Set app timezone based on user preference
+        if (auth()->check() && auth()->user()->timezone) {
+            config(['app.timezone' => auth()->user()->timezone]);
+            date_default_timezone_set(auth()->user()->timezone);
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Services\DebtService;
 use Illuminate\Support\Facades\DB;
 
 class TransactionObserver
@@ -14,6 +15,7 @@ class TransactionObserver
     public function created(Transaction $transaction): void
     {
         DB::transaction(fn () => $this->applyEffect($transaction));
+        $this->syncDebt($transaction->debt_id);
     }
 
     /**
@@ -28,6 +30,11 @@ class TransactionObserver
             // Apply the NEW effect (using current values)
             $this->applyEffect($transaction);
         });
+
+        $this->syncDebt($transaction->debt_id);
+        if ($transaction->wasChanged('debt_id')) {
+            $this->syncDebt($transaction->getOriginal('debt_id'));
+        }
     }
 
     /**
@@ -38,6 +45,7 @@ class TransactionObserver
         DB::transaction(function () use ($transaction) {
             $this->reverseEffect($transaction->toArray());
         });
+        $this->syncDebt($transaction->debt_id);
     }
 
     /**
@@ -48,6 +56,7 @@ class TransactionObserver
         DB::transaction(function () use ($transaction) {
             $this->applyEffect($transaction);
         });
+        $this->syncDebt($transaction->debt_id);
     }
 
     /**
@@ -59,6 +68,16 @@ class TransactionObserver
     }
 
     // ── Private Helpers ────────────────────────────────────
+
+    private function syncDebt(?int $debtId): void
+    {
+        if ($debtId) {
+            $debt = \App\Models\Debt::find($debtId);
+            if ($debt) {
+                app(DebtService::class)->syncRemainingAmount($debt);
+            }
+        }
+    }
 
     private function applyEffect(Transaction $tx): void
     {

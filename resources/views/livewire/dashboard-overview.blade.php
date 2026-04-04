@@ -34,10 +34,10 @@
         </button>
     </x-slot>
 
-    <div class="p-5 space-y-6">
+    <div class="p-5 space-y-6 transition-opacity duration-500" wire:loading.class="opacity-60 pointer-events-none">
         {{-- KPI strip --}}
         <div
-            class="grid grid-cols-2 md:grid-cols-5 border border-edge rounded overflow-hidden divide-x divide-y md:divide-y-0 divide-edge">
+            class="grid grid-cols-2 lg:grid-cols-5 border border-edge rounded overflow-hidden divide-x divide-y lg:divide-y-0 divide-edge shadow-sm">
             <x-kpi-card label="Income" :value="'₹'.number_format($summary['income'],2)" color="green"
                         :sub="date('M Y',mktime(0,0,0,$month,1,$year))">
                 <x-slot name="icon">

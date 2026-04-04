@@ -5,6 +5,7 @@ namespace App\Livewire;
 use App\Models\Category;
 use App\Services\TransactionService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class TransactionFormModal extends Component
@@ -29,6 +30,8 @@ class TransactionFormModal extends Component
 
     public string $reference_number = '';
 
+    public ?int $debt_id = null;
+
     protected $listeners = ['open-tx-modal' => 'openModal'];
 
     protected function rules(): array
@@ -42,10 +45,11 @@ class TransactionFormModal extends Component
             'transaction_date' => 'required|date',
             'note' => 'nullable|string|max:500',
             'reference_number' => 'nullable|string|max:255',
+            'debt_id' => 'nullable|exists:debts,id',
         ];
     }
 
-    public function openModal(?int $id = null): void
+    public function openModal(?int $id = null, ?int $debtId = null): void
     {
         $this->resetValidation();
         if ($id) {
@@ -60,12 +64,21 @@ class TransactionFormModal extends Component
                 'transaction_date' => $tx->transaction_date->toDateString(),
                 'note' => $tx->note ?? '',
                 'reference_number' => $tx->reference_number ?? '',
+                'debt_id' => $tx->debt_id,
             ]);
         } else {
-            $this->reset(['editingId', 'amount', 'note', 'reference_number', 'to_account_id', 'category_id']);
+            $this->reset(['editingId', 'amount', 'note', 'reference_number', 'to_account_id', 'category_id', 'debt_id']);
             $this->type = 'expense';
             $this->transaction_date = now()->toDateString();
             $this->account_id = Auth::user()->accounts()->value('id');
+
+            if ($debtId) {
+                $debt = Auth::user()->debts()->findOrFail($debtId);
+                $this->debt_id = $debtId;
+                $this->amount = $debt->remaining_amount;
+                $this->type = $debt->direction === 'lent' ? 'income' : 'expense';
+                $this->note = "Payment for debt: " . $debt->contact_name;
+            }
         }
         $this->open = true;
     }
@@ -73,28 +86,40 @@ class TransactionFormModal extends Component
     public function save(TransactionService $service): void
     {
         $this->validate();
-        $data = [
-            'user_id' => Auth::id(),
-            'type' => $this->type,
-            'amount' => $this->amount,
-            'account_id' => $this->account_id,
-            'to_account_id' => $this->type === 'transfer' ? $this->to_account_id : null,
-            'category_id' => $this->category_id,
-            'transaction_date' => $this->transaction_date,
-            'note' => $this->note ?: null,
-            'reference_number' => $this->reference_number ?: null,
-        ];
 
-        if ($this->editingId) {
-            $tx = Auth::user()->transactions()->findOrFail($this->editingId);
-            $service->update($tx, $data);
-        } else {
-            $service->create($data);
+        $executed = RateLimiter::attempt(
+            'tx-save:' . Auth::id(),
+            $maxAttempts = 60,
+            function () use ($service) {
+                $data = [
+                    'user_id' => Auth::id(),
+                    'type' => $this->type,
+                    'amount' => $this->amount,
+                    'account_id' => $this->account_id,
+                    'to_account_id' => $this->type === 'transfer' ? $this->to_account_id : null,
+                    'category_id' => $this->category_id,
+                    'transaction_date' => $this->transaction_date,
+                    'note' => $this->note ?: null,
+                    'reference_number' => $this->reference_number ?: null,
+                    'debt_id' => $this->debt_id,
+                ];
+
+                if ($this->editingId) {
+                    $tx = Auth::user()->transactions()->findOrFail($this->editingId);
+                    $service->update($tx, $data);
+                } else {
+                    $service->create($data);
+                }
+
+                $this->open = false;
+                $this->dispatch('transactionSaved');
+                session()->flash('success', $this->editingId ? 'Transaction updated.' : 'Transaction saved.');
+            }
+        );
+
+        if (!$executed) {
+            $this->addError('amount', 'Too many requests. Please slow down.');
         }
-
-        $this->open = false;
-        $this->dispatch('transactionSaved');
-        session()->flash('success', $this->editingId ? 'Transaction updated.' : 'Transaction saved.');
     }
 
     public function render()

@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Services\PdfImportService;
 use App\Services\TransactionService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 
@@ -23,7 +24,7 @@ class PdfImporter extends Component
 
     public function updatedFile()
     {
-        $this->validate(['file' => 'required|mimes:pdf|max:10240']);
+        $this->validate(['file' => 'required|mimes:pdf|max:5120']);
         $this->step = 2;
         $this->generatePreview();
     }
@@ -40,19 +41,29 @@ class PdfImporter extends Component
     {
         $this->validate(['accountId' => 'required']);
 
-        $txService = app(TransactionService::class);
-        $count = 0;
+        $executed = RateLimiter::attempt(
+            'tx-import:' . Auth::id(),
+            $maxAttempts = 60,
+            function () {
+                $txService = app(TransactionService::class);
+                $count = 0;
 
-        foreach ($this->previewData as $data) {
-            $data['user_id'] = Auth::id();
-            $data['account_id'] = $this->accountId;
-            $txService->create($data);
-            $count++;
+                foreach ($this->previewData as $data) {
+                    $data['user_id'] = Auth::id();
+                    $data['account_id'] = $this->accountId;
+                    $txService->create($data);
+                    $count++;
+                }
+
+                session()->flash('success', "Successfully imported $count transactions from PDF.");
+
+                return redirect()->route('transactions.index');
+            }
+        );
+
+        if (!$executed) {
+            session()->flash('error', 'Too many import requests. Please slow down.');
         }
-
-        session()->flash('success', "Successfully imported $count transactions from PDF.");
-
-        return redirect()->route('transactions.index');
     }
 
     public function render()

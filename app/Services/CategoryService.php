@@ -3,20 +3,34 @@
 namespace App\Services;
 
 use App\Models\Category;
+use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Collection;
+use Illuminate\Validation\ValidationException;
 
 class CategoryService
 {
     public function create(array $data): Category
     {
-        return Category::create($data);
+        try {
+            return Category::create($data);
+        } catch (UniqueConstraintViolationException $e) {
+            throw ValidationException::withMessages([
+                'name' => 'A category with this name and type already exists.',
+            ]);
+        }
     }
 
     public function update(Category $category, array $data): Category
     {
-        $category->update($data);
+        try {
+            $category->update($data);
 
-        return $category;
+            return $category;
+        } catch (UniqueConstraintViolationException $e) {
+            throw ValidationException::withMessages([
+                'name' => 'A category with this name and type already exists.',
+            ]);
+        }
     }
 
     public function delete(Category $category): bool
