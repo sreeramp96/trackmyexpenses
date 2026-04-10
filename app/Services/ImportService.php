@@ -16,6 +16,7 @@ class ImportService
         if (($handle = fopen($path, 'r')) !== false) {
             $headers = fgetcsv($handle, 1000, ',');
             while (($data = fgetcsv($handle, 1000, ',')) !== false) {
+                $data = array_slice($data, 0, count($headers));
                 $rows[] = array_combine($headers, $data);
             }
             fclose($handle);
@@ -42,9 +43,10 @@ class ImportService
     /**
      * Normalize dates from various formats to Y-m-d.
      */
-    public function parseDate(string $date, string $format = 'd/m/Y'): string
+    public function parseDate(string $date, string $format = 'm-d-Y'): string
     {
         try {
+//            dd($date);
             return Carbon::createFromFormat($format, $date)->format('Y-m-d');
         } catch (\Exception $e) {
             return now()->format('Y-m-d');

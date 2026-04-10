@@ -58,7 +58,7 @@ class DashboardOverview extends Component
         $recentTransactions = Auth::user()->transactions()
             ->with(['account', 'category'])
             ->latest('transaction_date')
-            ->limit(8)
+            ->limit(16)
             ->get();
 
         // Prepare charts

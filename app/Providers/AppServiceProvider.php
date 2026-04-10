@@ -26,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(DebtService::class);
         $this->app->singleton(DashboardService::class);
         $this->app->singleton(ReportService::class);
+        if ($this->app->environment('local') && class_exists(\Laravel\Telescope\TelescopeServiceProvider::class)) {
+            $this->app->register(\Laravel\Telescope\TelescopeServiceProvider::class);
+            $this->app->register(TelescopeServiceProvider::class);
+        }
     }
 
     /**
@@ -42,4 +46,6 @@ class AppServiceProvider extends ServiceProvider
             date_default_timezone_set(auth()->user()->timezone);
         }
     }
+
+
 }

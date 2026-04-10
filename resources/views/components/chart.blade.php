@@ -12,7 +12,7 @@
     options: @js($options),
     init() {
         const isMobile = window.innerWidth < 768;
-        
+
         // Deep merge responsive legend
         if (this.options.plugins && this.options.plugins.legend) {
             this.options.plugins.legend.position = isMobile ? 'bottom' : (this.options.plugins.legend.position || 'top');
@@ -47,7 +47,7 @@
             if (this.chart.options.plugins && this.chart.options.plugins.legend) {
                 const currentPos = this.chart.options.plugins.legend.position;
                 const newPos = isNowMobile ? 'bottom' : (this.options.plugins?.legend?.position || 'top');
-                
+
                 if (currentPos !== newPos) {
                     this.chart.options.plugins.legend.position = newPos;
                     this.chart.update();
