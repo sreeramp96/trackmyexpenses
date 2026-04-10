@@ -12,14 +12,17 @@ class CategorizationService
      */
     protected array $rules = [
         'Salary' => ['salary', 'wages', 'payout'],
-        'Food & Dining' => ['zomato', 'swiggy', 'restaurant', 'cafe', 'food', 'hotel', 'dining'],
-        'Bills & Utilities' => ['kseb', 'electricity', 'water', 'internet', 'recharge', 'jio', 'airtel', 'vi', 'bill'],
-        'Transport' => ['uber', 'ola', 'fuel', 'petrol', 'diesel', 'metro', 'auto'],
-        'Shopping' => ['amazon', 'flipkart', 'myntra', 'grocery', 'big basket', 'supermarket', 'mall'],
-        'Entertainment' => ['netflix', 'hotstar', 'prime video', 'cinema', 'theatre', 'game', 'steam', 'gta'],
+        'Food & Dining' => ['zomato', 'swiggy', 'restaurant', 'cafe', 'food', 'hotel', 'dining', 'lunch', 'dinner', 'breakfast'],
+        'Bills & Utilities' => ['kseb', 'electricity', 'water', 'internet', 'recharge', 'jio', 'airtel', 'vi', 'bill','BSNL', 'broaband'],
+        'Transport' => ['uber', 'ola', 'fuel', 'petrol', 'diesel', 'metro', 'auto', 'train'],
+        'Shopping' => ['amazon', 'flipkart', 'myntra', 'grocery', 'big basket', 'supermarket', 'mall','swiggy instamart', 'instamart','blinkit'],
+        'Entertainment' => ['netflix', 'hotstar', 'prime video', 'cinema', 'theatre', 'game', 'steam'],
         'Education' => ['udemy', 'coursera', 'college', 'school', 'fees', 'book', 'stationary'],
         'Health' => ['hospital', 'pharmacy', 'medicine', 'clinic', 'doctor', 'lab', 'medplus'],
         'Rent & Housing' => ['rent', 'maintenance', 'flat', 'apartment'],
+        'Bank Fees' => ['MIN BAL CHGS', 'IMPS Commission', 'Debit Card Charges'],
+        'Family / Personal Transfer (Out)' => ['To Amma', 'To Shelna', 'To Dhanam Periyamma', 'To'],
+        'Family / Personal Transfer (In)' => ['From Amma', 'From Shelna', 'From Dhanam Periyamma', 'From'],
     ];
 
     /**

@@ -189,14 +189,27 @@ class TransactionService
      */
     public function historicalMonthlyTotals(int $userId, int $months = 6): array
     {
+        $since = now()->subMonths($months - 1)->startOfMonth();
+
+        // Single query: group by year+month+type instead of 6×2 individual queries
+        $rows = Transaction::where('user_id', $userId)
+            ->whereIn('type', ['income', 'expense'])
+            ->where('transaction_date', '>=', $since)
+            ->selectRaw('YEAR(transaction_date) as y, MONTH(transaction_date) as m, type, SUM(amount) as total')
+            ->groupBy('y', 'm', 'type')
+            ->get()
+            ->groupBy(fn($r) => $r->y . '-' . str_pad($r->m, 2, '0', STR_PAD_LEFT));
+
         $data = [];
         for ($i = $months - 1; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $summary = $this->monthlySummary($userId, $date->month, $date->year);
+            $key  = $date->year . '-' . str_pad($date->month, 2, '0', STR_PAD_LEFT);
+            $bucket = $rows->get($key, collect());
+
             $data[] = [
-                'label' => $date->format('M Y'),
-                'income' => $summary['income'],
-                'expense' => $summary['expense'],
+                'label'   => $date->format('M Y'),
+                'income'  => (float) ($bucket->firstWhere('type', 'income')?->total ?? 0),
+                'expense' => (float) ($bucket->firstWhere('type', 'expense')?->total ?? 0),
             ];
         }
 

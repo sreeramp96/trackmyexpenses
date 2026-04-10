@@ -7,7 +7,11 @@
     <title>{{ $title ?? 'TrackMyExpenses' }}</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap"
+            rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.1/dist/chart.umd.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -15,13 +19,16 @@
         [x-cloak] { display: none !important; }
         .loading-bar {
             height: 2px;
-            background: #2563eb;
+            background: #1a1916;
             position: fixed;
             top: 0;
             left: 0;
             z-index: 9999;
             transition: width 0.3s ease;
         }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #ccc9be; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-canvas text-ink font-sans antialiased" x-data="{ collapsed: false, mobileOpen: false }" x-cloak>
@@ -52,26 +59,29 @@
                    '-translate-x-full md:translate-x-0': !mobileOpen
                }">
 
-            <div class="flex items-center justify-between px-4 py-3 border-b border-edge h-12">
-                <div class="flex items-center gap-2 overflow-hidden">
+            <div class="flex items-center border-b border-edge h-12 px-4 transition-all duration-300 overflow-hidden"
+                :class="collapsed ? 'justify-center px-0' : 'justify-between px-4'">
+                <div class="flex items-center gap-2 min-w-0">
                     <div class="w-6 h-6 bg-ink rounded flex items-center justify-center shrink-0">
-                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2"
+                        <svg class="w-3 h-3 text-white" fill="none" stroke="currentColor" stroke-width="2.5"
                              stroke-linecap="round" viewBox="0 0 12 12">
                             <path d="M6 1v10M1 6h10"/>
                         </svg>
                     </div>
-                    <span class="text-sm font-medium tracking-tight truncate transition-opacity duration-300" :class="collapsed ? 'opacity-0 w-0' : 'opacity-100'">TrackMyExp</span>
+                    <span class="text-sm font-bold tracking-tighter whitespace-nowrap transition-all duration-300"
+                        :class="collapsed ? 'opacity-0 w-0 -translate-x-4' : 'opacity-100 w-auto translate-x-0'">TrackMyExp</span>
                 </div>
-                <button @click="collapsed = !collapsed" class="hidden md:block text-ink-3 hover:text-ink transition-colors">
-                    <svg class="w-4 h-4 transition-transform duration-300" :class="collapsed ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" /></svg>
-                </button>
-                <button @click="mobileOpen = false" class="md:hidden text-ink-3 hover:text-ink transition-colors">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                <button @click="collapsed = !collapsed" class="hidden md:flex shrink-0 text-ink-3 hover:text-ink transition-colors"
+                    :class="collapsed ? 'hidden' : ''">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                    </svg>
                 </button>
             </div>
 
-            <nav class="flex-1 py-2 overflow-y-auto custom-scrollbar">
-                <p class="px-4 pt-3 pb-1 text-[10px] font-mono font-medium text-ink-3 uppercase tracking-widest transition-opacity duration-300" :class="collapsed ? 'opacity-0' : 'opacity-100'">
+            <nav class="flex-1 py-2 overflow-y-auto custom-scrollbar overflow-x-hidden">
+                <p class="px-4 pt-3 pb-1 text-[9px] font-mono font-bold text-ink-3 uppercase tracking-[0.2em] transition-opacity duration-300"
+                    :class="collapsed ? 'opacity-0' : 'opacity-100'">
                     Overview</p>
 
                 <x-sidebar-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
@@ -116,15 +126,7 @@
                     Import PDF
                 </x-sidebar-link>
 
-                <div class="h-px bg-edge my-2 mx-4" :class="collapsed ? 'mx-2' : 'mx-4'"></div>
-                <p class="px-4 pb-1 text-[10px] font-mono font-medium text-ink-3 uppercase tracking-widest transition-opacity duration-300" :class="collapsed ? 'opacity-0' : 'opacity-100'">Planning</p>
-
-                <x-sidebar-link :href="route('budgets.index')" :active="request()->routeIs('budgets.*')">
-                    <x-slot name="icon">
-                        <svg viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><circle cx="7" cy="7" r="5.5"/><path d="M7 3.5v3.5l2.5 1.5"/></svg>
-                    </x-slot>
-                    Budgets
-                </x-sidebar-link>
+                <div class="h-px bg-edge my-2 mx-4 transition-all duration-300" :class="collapsed ? 'opacity-0' : 'opacity-100'"></div>
 
                 <x-sidebar-link :href="route('debts.index')" :active="request()->routeIs('debts.*')">
                     <x-slot name="icon">
@@ -141,17 +143,22 @@
                 </x-sidebar-link>
             </nav>
 
-            <div class="border-t border-edge px-4 py-3 flex items-center justify-between group overflow-hidden">
-                <div class="flex items-center gap-2 min-w-0">
-                    <div class="w-7 h-7 rounded-full bg-surface-3 border border-edge-2 flex items-center justify-center text-[10px] font-mono font-medium text-ink-2 shrink-0">
+            <div class="border-t border-edge flex items-center overflow-hidden transition-all duration-300 relative group min-h-[52px]"
+                :class="collapsed ? 'justify-center px-0' : 'justify-between px-4'">
+                <div class="flex items-center gap-2 min-w-0 transition-all duration-300"
+                    :class="collapsed ? 'justify-center w-full' : ''">
+                    <div
+                        class="w-7 h-7 rounded-full bg-surface-3 border border-edge-2 flex items-center justify-center text-[10px] font-mono font-bold text-ink-2 shrink-0">
                         {{ strtoupper(substr(Auth::user()->name, 0, 2)) }}
                     </div>
-                    <div class="min-w-0 transition-opacity duration-300" :class="collapsed ? 'opacity-0 w-0' : 'opacity-100'">
-                        <p class="text-xs font-medium truncate">{{ Auth::user()->name }}</p>
-                        <p class="text-[10px] text-ink-3 truncate">{{ Auth::user()->email }}</p>
+                    <div class="min-w-0 transition-all duration-300 overflow-hidden"
+                        :class="collapsed ? 'max-width-0 opacity-0' : 'max-width-160px opacity-100'">
+                        <p class="text-[11px] font-bold truncate leading-tight">{{ Auth::user()->name }}</p>
+                        <p class="text-[9px] text-ink-3 truncate leading-tight">{{ Auth::user()->email }}</p>
                     </div>
                 </div>
-                <form method="POST" action="{{ route('logout') }}" :class="collapsed ? 'hidden' : 'block'">
+                <form method="POST" action="{{ route('logout') }}" class="shrink-0 transition-all duration-300"
+                    :class="collapsed ? 'absolute invisible opacity-0' : 'visible opacity-100'">
                     @csrf
                     <button type="submit" class="text-ink-3 hover:text-finance-red transition-colors p-1" title="Log out">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -159,6 +166,13 @@
                         </svg>
                     </button>
                 </form>
+            </div>
+            {{-- Expand button shown only when collapsed --}}
+            <div class="hidden md:flex items-center justify-center py-2 cursor-pointer hover:bg-surface-2 transition-colors border-t border-edge"
+                x-show="collapsed" @click="collapsed = false" title="Expand sidebar">
+                <svg class="w-4 h-4 text-ink-3 rotate-180" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 19l-7-7 7-7m8 14l-7-7 7-7" />
+                </svg>
             </div>
         </aside>
 

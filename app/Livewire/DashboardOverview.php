@@ -55,11 +55,18 @@ class DashboardOverview extends Component
     public function render()
     {
         $data = app(DashboardService::class)->getDashboardData(Auth::id(), (int) $this->month, (int) $this->year);
+        
+        // Filter recent transactions by the selected month/year
         $recentTransactions = Auth::user()->transactions()
             ->with(['account', 'category'])
+            ->forMonth((int) $this->month, (int) $this->year)
             ->latest('transaction_date')
-            ->limit(16)
+            ->limit(10)
             ->get();
+
+        // Account breakdown
+        $accounts = Auth::user()->accounts()->where('is_active', true)->get();
+        $accountBalances = $accounts->sum('balance');
 
         // Prepare charts
         $dailySpendingLabels = $data['daily_trends']->keys()->map(fn ($d) => "Day $d")->toArray();
@@ -74,7 +81,6 @@ class DashboardOverview extends Component
         $historicalExpense = collect($data['historical_trends'])->pluck('expense')->toArray();
 
         // Calculate Net Worth
-        $accountBalances = Auth::user()->accounts()->sum('balance');
         $netWorth = (float) $accountBalances + $data['debts']['net_debt'];
 
         return view('livewire.dashboard-overview', array_merge($data, [
@@ -97,6 +103,7 @@ class DashboardOverview extends Component
                 'expense' => $historicalExpense,
             ],
             'netWorth' => $netWorth,
+            'accounts' => $accounts,
             'budgets' => $data['budgets'],
             'activeDebts' => $data['active_debts'],
             'recentTransactions' => $recentTransactions,
