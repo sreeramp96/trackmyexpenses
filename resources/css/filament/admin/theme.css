@@ -1,0 +1,80 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+:root {
+    --c-bg: #f5f4f0;
+}
+
+body {
+    font-family: 'Bricolage Grotesque', sans-serif !important;
+}
+
+.fi-main {
+    background-color: var(--c-bg);
+}
+
+/* Unique Minimalist Overrides */
+.fi-section, .fi-ta-ctn, .fi-wi-widget, .fi-card {
+    box-shadow: none !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.75rem !important;
+    background-color: #fff !important;
+}
+
+.fi-header-heading {
+    letter-spacing: -0.03em !important;
+    font-weight: 800 !important;
+}
+
+/* Enforce Bricolage for stats and headers */
+.fi-wi-stats-overview-stat-value,
+.fi-ta-header-cell-label,
+.fi-ta-text-item-label {
+    font-family: 'Bricolage Grotesque', sans-serif !important;
+    letter-spacing: -0.02em;
+}
+
+/* Auth Page Customization (Unique Login/Register) */
+.fi-simple-main {
+    background-color: var(--c-bg) !important;
+}
+
+.fi-simple-main .fi-card {
+    border: 2px solid #1a1916 !important;
+    border-radius: 1.5rem !important;
+    padding: 2rem !important;
+    box-shadow: 10px 10px 0px 0px rgba(26, 25, 22, 0.05) !important;
+}
+
+.fi-simple-main h1 {
+    font-size: 2rem !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.05em !important;
+    text-transform: uppercase;
+    font-style: italic;
+}
+
+.fi-simple-main input {
+    background-color: #f9fafb !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 0.75rem !important;
+    padding: 0.75rem !important;
+}
+
+.fi-simple-main button {
+    background-color: #1a1916 !important;
+    border-radius: 0.75rem !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.1em !important;
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    transition: all 0.3s !important;
+}
+
+.fi-simple-main button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -5px rgba(26, 25, 22, 0.2) !important;
+}

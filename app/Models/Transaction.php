@@ -6,16 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Activitylog\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions as SupportLogOptions;
 
 class Transaction extends Model
 {
     use HasFactory, LogsActivity, SoftDeletes;
 
-    public function getActivitylogOptions(): LogOptions
+    public function getActivitylogOptions(): SupportLogOptions
     {
-        return LogOptions::defaults()
+        return SupportLogOptions::defaults()
             ->logAll()
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
@@ -35,14 +36,14 @@ class Transaction extends Model
         'is_reconciled',
     ];
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'transaction_date' => 'date',
-        'is_reconciled' => 'boolean',
-        'debt_id' => 'integer',
-    ];
-
-    // ── Relationships ──────────────────────────────────────
+    protected function casts(): array
+    {
+        return [
+            'transaction_date' => 'date',
+            'amount' => 'decimal:2',
+            'is_reconciled' => 'boolean',
+        ];
+    }
 
     public function user(): BelongsTo
     {
@@ -69,14 +70,6 @@ class Transaction extends Model
         return $this->belongsTo(Debt::class);
     }
 
-    // ── Scopes ─────────────────────────────────────────────
-
-    public function scopeForMonth($query, int $month, int $year)
-    {
-        return $query->whereMonth('transaction_date', $month)
-            ->whereYear('transaction_date', $year);
-    }
-
     public function scopeIncome($query)
     {
         return $query->where('type', 'income');
@@ -92,13 +85,21 @@ class Transaction extends Model
         return $query->where('type', 'transfer');
     }
 
-    public function scopeForAccount($query, int $accountId)
+    public function scopeForMonth($query, int $month, int $year)
     {
-        return $query->where('account_id', $accountId)
-            ->orWhere('to_account_id', $accountId);
+        return $query->whereMonth('transaction_date', $month)
+            ->whereYear('transaction_date', $year);
     }
 
-    // ── Helpers ────────────────────────────────────────────
+    public function isIncome(): bool
+    {
+        return $this->type === 'income';
+    }
+
+    public function isExpense(): bool
+    {
+        return $this->type === 'expense';
+    }
 
     public function isTransfer(): bool
     {

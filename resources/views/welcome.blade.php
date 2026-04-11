@@ -10,6 +10,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <style>
+        body{
+            font-family: 'Bricolage Grotesque', sans-serif;
+        }
         @keyframes float {
             0%, 100% { transform: translateY(0px); }
             50% { transform: translateY(-20px); }
@@ -117,7 +120,7 @@
         <div class="grid lg:grid-cols-2 gap-12 items-center">
             <div class="space-y-8">
                 <div class="space-y-4 opacity-0 animate-fadeInUp">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-finance-green-bg border border-finance-green-border rounded-full text-xs font-mono font-medium text-finance-green">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-finance-green-bg border border-finance-green-border rounded-full text-xs font-sans font-medium text-finance-green">
                         <span class="w-2 h-2 bg-finance-green rounded-full animate-pulse-subtle"></span>
                         Smart Finance Management
                     </div>
@@ -157,15 +160,15 @@
                 <div class="flex items-center gap-8 opacity-0 animate-fadeInUp delay-300">
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">100%</div>
-                        <div class="text-xs text-ink-3 font-mono uppercase tracking-wider">Free Forever</div>
+                        <div class="text-xs text-ink-3 font-sans uppercase tracking-wider">Free Forever</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">∞</div>
-                        <div class="text-xs text-ink-3 font-mono uppercase tracking-wider">Transactions</div>
+                        <div class="text-xs text-ink-3 font-sans uppercase tracking-wider">Transactions</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">24/7</div>
-                        <div class="text-xs text-ink-3 font-mono uppercase tracking-wider">Access</div>
+                        <div class="text-xs text-ink-3 font-sans uppercase tracking-wider">Access</div>
                     </div>
                 </div>
             </div>
@@ -178,23 +181,23 @@
                             <div class="w-3 h-3 rounded-full bg-finance-amber"></div>
                             <div class="w-3 h-3 rounded-full bg-finance-green"></div>
                         </div>
-                        <span class="text-xs font-mono text-ink-3 ml-4">Dashboard Preview</span>
+                        <span class="text-xs font-sans text-ink-3 ml-4">Dashboard Preview</span>
                     </div>
                     <div class="p-6 space-y-4">
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-finance-green-bg border border-finance-green-border p-4 rounded-lg">
-                                <div class="text-[10px] font-mono font-bold text-finance-green uppercase tracking-widest mb-1">Income</div>
-                                <div class="text-2xl font-mono font-medium text-finance-green">₹45,000</div>
+                                <div class="text-[10px] font-sans font-bold text-finance-green uppercase tracking-widest mb-1">Income</div>
+                                <div class="text-2xl font-sans font-medium text-finance-green">₹45,000</div>
                             </div>
                             <div class="bg-finance-red-bg border border-finance-red-border p-4 rounded-lg">
-                                <div class="text-[10px] font-mono font-bold text-finance-red uppercase tracking-widest mb-1">Expenses</div>
-                                <div class="text-2xl font-mono font-medium text-finance-red">₹32,450</div>
+                                <div class="text-[10px] font-sans font-bold text-finance-red uppercase tracking-widest mb-1">Expenses</div>
+                                <div class="text-2xl font-sans font-medium text-finance-red">₹32,450</div>
                             </div>
                         </div>
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs">
                                 <span class="text-ink-2">Food & Dining</span>
-                                <span class="font-mono text-ink">75%</span>
+                                <span class="font-sans text-ink">75%</span>
                             </div>
                             <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
                                 <div class="h-full bg-finance-green rounded-full" style="width: 75%"></div>
@@ -203,7 +206,7 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs">
                                 <span class="text-ink-2">Transportation</span>
-                                <span class="font-mono text-ink">45%</span>
+                                <span class="font-sans text-ink">45%</span>
                             </div>
                             <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
                                 <div class="h-full bg-finance-blue rounded-full" style="width: 45%"></div>
@@ -212,7 +215,7 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs">
                                 <span class="text-ink-2">Entertainment</span>
-                                <span class="font-mono text-ink">90%</span>
+                                <span class="font-sans text-ink">90%</span>
                             </div>
                             <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
                                 <div class="h-full bg-finance-amber rounded-full" style="width: 90%"></div>
