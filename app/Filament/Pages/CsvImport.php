@@ -7,7 +7,7 @@ use App\Models\Category;
 use App\Services\CategorizationService;
 use App\Services\ImportService;
 use App\Services\TransactionService;
-use App\Filament\Resources\TransactionResource;
+use App\Filament\Resources\Transactions\TransactionResource;
 use BackedEnum;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
@@ -28,7 +28,7 @@ class CsvImport extends Page implements HasForms
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-arrow-up';
 
     protected string $view = 'filament.pages.csv-import';
-    
+
     protected static string|UnitEnum|null $navigationGroup = 'Utilities';
 
     protected static ?string $title = 'Statement Import';
@@ -56,9 +56,9 @@ class CsvImport extends Page implements HasForms
                 FileUpload::make('file')
                     ->label('Bank Statement (CSV, XLS, XLSX)')
                     ->acceptedFileTypes([
-                        'text/csv', 
-                        'text/plain', 
-                        'application/vnd.ms-excel', 
+                        'text/csv',
+                        'text/plain',
+                        'application/vnd.ms-excel',
                         'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                     ])
                     ->maxSize(5120)
@@ -106,9 +106,9 @@ class CsvImport extends Page implements HasForms
 
         $path = $uploadedFile->getRealPath();
         $extension = $uploadedFile->getClientOriginalExtension();
-        
+
         $importService = app(ImportService::class);
-        
+
         if (in_array(strtolower($extension), ['xls', 'xlsx'])) {
             $this->rows = $importService->parseExcel($path)->toArray();
         } else {
@@ -131,7 +131,7 @@ class CsvImport extends Page implements HasForms
         $formData = $this->form->getState();
         $importService = app(ImportService::class);
         $catService = app(CategorizationService::class);
-        
+
         $this->previewData = [];
 
         foreach ($this->rows as $index => $row) {

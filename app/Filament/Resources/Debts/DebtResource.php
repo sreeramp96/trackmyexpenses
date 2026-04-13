@@ -58,7 +58,7 @@ class DebtResource extends Resource
                     ->required()
                     ->prefix('₹')
                     ->reactive()
-                    ->afterStateUpdated(fn ($state, $set) => $set('remaining_amount', $state)),
+                    ->afterStateUpdated(fn($state, $set) => $set('remaining_amount', $state)),
                 TextInput::make('remaining_amount')
                     ->numeric()
                     ->required()
@@ -80,11 +80,11 @@ class DebtResource extends Resource
                     ->searchable(),
                 TextColumn::make('direction')
                     ->badge()
-                    ->color(fn (string $state): string => $state === 'lent' ? 'success' : 'danger')
-                    ->formatStateUsing(fn ($state) => ucfirst($state)),
+                    ->color(fn(string $state): string => $state === 'lent' ? 'success' : 'danger')
+                    ->formatStateUsing(fn($state) => ucfirst($state)),
                 TextColumn::make('remaining_amount')
                     ->money('INR')
-                    ->color(fn ($record) => $record->isOverdue() ? 'danger' : 'gray'),
+                    ->color(fn($record) => $record->isOverdue() ? 'danger' : 'gray'),
                 TextColumn::make('due_date')
                     ->date('M d, Y')
                     ->placeholder('No date'),
@@ -109,7 +109,7 @@ class DebtResource extends Resource
                             TextInput::make('amount')
                                 ->numeric()
                                 ->required()
-                                ->default(fn ($record) => $record->remaining_amount)
+                                ->default(fn($record) => $record->remaining_amount)
                                 ->prefix('₹'),
                             DatePicker::make('transaction_date')
                                 ->default(now())
@@ -131,8 +131,8 @@ class DebtResource extends Resource
                                 ->success()
                                 ->send();
                         })
-                        ->visible(fn ($record) => ! $record->is_settled),
-                    ViewAction::make(),
+                        ->visible(fn($record) => !$record->is_settled),
+                        ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),

@@ -215,7 +215,7 @@
 
             @if($step === 2)
                 <div class="animate-in fade-in slide-in-from-bottom-8 duration-700 space-y-8">
-                    
+
                     <div class="main-card border-dashed bg-[#f9fafb] p-6">
                         <h3 class="text-xs font-black uppercase tracking-widest text-[#6b7280] mb-4">Target Account</h3>
                         <div class="pb-16 relative z-20">
@@ -225,7 +225,7 @@
 
                     <div class="flex items-end justify-between">
                         <div>
-                            <h2 class="text-3xl font-black tracking-tight uppercase italic">Extractor Review</h2>
+                            <h2 class="text-3xl font-black tracking-tight uppercase">Extractor Review</h2>
                             <p class="text-sm text-[#6b7280]">Verify and tune the data extracted from your HDFC statement.</p>
                         </div>
                         <div class="bg-[#1a1916] text-white px-5 py-2 rounded-xl text-sm font-black shadow-xl flex items-center gap-3">
@@ -290,7 +290,7 @@
                         <x-filament::button wire:click="$set('step', 1)" color="gray" variant="ghost" icon="heroicon-m-arrow-left">
                             Upload Different File
                         </x-filament::button>
-                        
+
                         <x-filament::button type="submit" size="xl" color="success" icon="heroicon-m-check-badge" class="px-20 shadow-2xl font-black italic">
                             COMMIT TO LEDGER
                         </x-filament::button>

@@ -259,7 +259,7 @@
                 <div class="animate-in fade-in slide-in-from-bottom-8 duration-700">
                     <div class="flex items-end justify-between mb-8">
                         <div>
-                            <h2 class="text-3xl font-black tracking-tight uppercase italic">Staging Area</h2>
+                            <h2 class="text-3xl font-black tracking-tight uppercase">Staging Area</h2>
                             <p class="text-sm text-[#6b7280]">Adjust extracted data before final database commitment.</p>
                         </div>
                         <div class="flex items-center gap-3">
@@ -326,7 +326,7 @@
                         <x-filament::button wire:click="$set('step', 2)" color="gray" variant="ghost" icon="heroicon-m-arrow-uturn-left">
                             Back to Mapping
                         </x-filament::button>
-                        
+
                         <x-filament::button type="submit" size="xl" color="success" icon="heroicon-m-cloud-arrow-up" class="px-16 shadow-2xl font-black italic">
                             FINALIZE & SYNC DATA
                         </x-filament::button>
