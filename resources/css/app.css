@@ -21,6 +21,23 @@
     --c-blue:     #1e3a5f;
 }
 
+.dark {
+    --c-bg:       #000000;
+    --c-surface:  #000000;
+    --c-surface2: #0a0a0a;
+    --c-surface3: #111111;
+    --c-border:   #222222;
+    --c-border2:  #333333;
+    --c-text:     #ffffff;
+    --c-text2:    #a1a1aa;
+    --c-text3:    #71717a;
+    /* Financial colors stay precise */
+    --c-green:    #22c55e; /* Vibrant Green for OLED contrast */
+    --c-red:      #ef4444; /* Vibrant Red for OLED contrast */
+    --c-amber:    #f59e0b;
+    --c-blue:     #3b82f6;
+}
+
 @layer utilities {
     .custom-scrollbar::-webkit-scrollbar {
         width: 4px;

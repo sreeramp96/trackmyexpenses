@@ -5,6 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>TrackMyExpenses - Smart Personal Finance Management</title>
+<link rel="icon" type="image/x-icon" href="/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/android-chrome-192x192.png">
+<link rel="icon" type="image/png" sizes="512x512" href="/android-chrome-512x512.png">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ffffff">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap" rel="stylesheet">
@@ -64,7 +72,7 @@
         }
     </style>
 </head>
-<body class="bg-canvas text-ink font-sans antialiased overflow-x-hidden">
+<body class="bg-canvas text-ink antialiased overflow-x-hidden">
 
 <!-- Navigation -->
 <nav class="fixed top-0 left-0 right-0 z-50 bg-surface/80 backdrop-blur-md border-b border-edge">
@@ -72,9 +80,21 @@
         <div class="flex justify-between items-center h-16">
             <div class="flex items-center gap-3 animate-slideInLeft">
                 <div class="w-8 h-8 bg-ink rounded-lg flex items-center justify-center shrink-0 transform hover:rotate-12 transition-transform duration-300">
-                    <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12" stroke-linecap="round">
+                    {{-- <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 12 12" stroke-linecap="round">
                         <path d="M6 1v10M1 6h10"/>
-                    </svg>
+                    </svg> --}}
+                    <svg width="800px" height="800px" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_901_3008)">
+<path d="M31 6V11V16V21V26V31H12C18.07 31 23 26.07 23 20C23 13.93 18.07 9 12 9C10.23 9 8.56 9.42 7.08 10.16L7 10V1H31V6Z" fill="#668077"/>
+<path d="M12 9C18.07 9 23 13.93 23 20C23 26.07 18.07 31 12 31C5.93 31 1 26.07 1 20C1 15.7 3.48 11.97 7.08 10.16C8.56 9.42 10.23 9 12 9Z" fill="#FFC44D"/>
+<path d="M15 17C15 15.343 13.657 14 12 14M12 14C10.343 14 9 15.343 9 17C9 18.657 10.343 20 12 20C13.657 20 15 21.343 15 23C15 24.657 13.657 26 12 26M12 14V13M12 26C10.343 26 9 24.657 9 23M12 26V27M22 31H31V29M25 26H31V24M26 21H31V19M26 16H31V14M23 11H31V9M10 6H31V1H7V6M23 20C23 13.926 18.074 9 12 9C5.926 9 1 13.926 1 20C1 26.074 5.926 31 12 31C18.074 31 23 26.074 23 20Z" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+<defs>
+<clipPath id="clip0_901_3008">
+<rect width="32" height="32" fill="white"/>
+</clipPath>
+</defs>
+</svg>
                 </div>
                 <span class="text-xl font-semibold tracking-tight">TrackMyExpenses</span>
             </div>
@@ -120,7 +140,7 @@
         <div class="grid lg:grid-cols-2 gap-12 items-center">
             <div class="space-y-8">
                 <div class="space-y-4 opacity-0 animate-fadeInUp">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-finance-green-bg border border-finance-green-border rounded-full text-xs font-sans font-medium text-finance-green">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-finance-green-bg border border-finance-green-border rounded-full text-xs font-medium text-finance-green">
                         <span class="w-2 h-2 bg-finance-green rounded-full animate-pulse-subtle"></span>
                         Smart Finance Management
                     </div>
@@ -157,20 +177,20 @@
                     @endauth
                 </div>
 
-                <div class="flex items-center gap-8 opacity-0 animate-fadeInUp delay-300">
+                {{-- <div class="flex items-center gap-8 opacity-0 animate-fadeInUp delay-300">
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">100%</div>
-                        <div class="text-xs text-ink-3 font-sans uppercase tracking-wider">Free Forever</div>
+                        <div class="text-xs text-ink-3 uppercase tracking-wider">Free Forever</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">∞</div>
-                        <div class="text-xs text-ink-3 font-sans uppercase tracking-wider">Transactions</div>
+                        <div class="text-xs text-ink-3 uppercase tracking-wider">Transactions</div>
                     </div>
                     <div class="text-center">
                         <div class="text-3xl font-bold gradient-text">24/7</div>
-                        <div class="text-xs text-ink-3 font-sans uppercase tracking-wider">Access</div>
+                        <div class="text-xs text-ink-3 uppercase tracking-wider">Access</div>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
             <div class="relative opacity-0 animate-fadeInUp delay-400">
@@ -181,23 +201,23 @@
                             <div class="w-3 h-3 rounded-full bg-finance-amber"></div>
                             <div class="w-3 h-3 rounded-full bg-finance-green"></div>
                         </div>
-                        <span class="text-xs font-sans text-ink-3 ml-4">Dashboard Preview</span>
+                        <span class="text-xs text-ink-3 ml-4">Dashboard Preview</span>
                     </div>
                     <div class="p-6 space-y-4">
                         <div class="grid grid-cols-2 gap-3">
                             <div class="bg-finance-green-bg border border-finance-green-border p-4 rounded-lg">
-                                <div class="text-[10px] font-sans font-bold text-finance-green uppercase tracking-widest mb-1">Income</div>
-                                <div class="text-2xl font-sans font-medium text-finance-green">₹45,000</div>
+                                <div class="text-[10px] font-bold text-finance-green uppercase tracking-widest mb-1">Income</div>
+                                <div class="text-2xl font-medium text-finance-green">₹45,000</div>
                             </div>
                             <div class="bg-finance-red-bg border border-finance-red-border p-4 rounded-lg">
-                                <div class="text-[10px] font-sans font-bold text-finance-red uppercase tracking-widest mb-1">Expenses</div>
-                                <div class="text-2xl font-sans font-medium text-finance-red">₹32,450</div>
+                                <div class="text-[10px] font-bold text-finance-red uppercase tracking-widest mb-1">Expenses</div>
+                                <div class="text-2xl font-medium text-finance-red">₹32,450</div>
                             </div>
                         </div>
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs">
                                 <span class="text-ink-2">Food & Dining</span>
-                                <span class="font-sans text-ink">75%</span>
+                                <span class="text-ink">75%</span>
                             </div>
                             <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
                                 <div class="h-full bg-finance-green rounded-full" style="width: 75%"></div>
@@ -206,7 +226,7 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs">
                                 <span class="text-ink-2">Transportation</span>
-                                <span class="font-sans text-ink">45%</span>
+                                <span class="text-ink">45%</span>
                             </div>
                             <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
                                 <div class="h-full bg-finance-blue rounded-full" style="width: 45%"></div>
@@ -215,7 +235,7 @@
                         <div class="space-y-2">
                             <div class="flex items-center justify-between text-xs">
                                 <span class="text-ink-2">Entertainment</span>
-                                <span class="font-sans text-ink">90%</span>
+                                <span class="text-ink">90%</span>
                             </div>
                             <div class="h-2 bg-surface-3 rounded-full overflow-hidden">
                                 <div class="h-full bg-finance-amber rounded-full" style="width: 90%"></div>

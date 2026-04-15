@@ -26,23 +26,14 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('TrackMyExpenses')
+            // ->brandLogo(asset('favicon-32x32.png'))
+            ->favicon(url('favicon.ico'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->login()
             ->registration()
             ->colors([
-                'primary' => [
-                    50 => '250, 249, 245',
-                    100 => '245, 244, 240',
-                    200 => '226, 224, 216',
-                    300 => '204, 201, 190',
-                    400 => '155, 152, 144',
-                    500 => '107, 104, 96',
-                    600 => '26, 25, 22', // Primary Ink
-                    700 => '20, 19, 17',
-                    800 => '15, 14, 13',
-                    900 => '10, 9, 8',
-                    950 => '5, 4, 4',
-                ],
+                'primary' => Color::Gray,
+                'gray' => Color::Zinc,
                 'success' => Color::Green,
                 'danger' => Color::Red,
                 'warning' => Color::Amber,
@@ -50,6 +41,7 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->font('Bricolage Grotesque')
             ->sidebarCollapsibleOnDesktop()
+            ->darkMode()
             ->maxContentWidth('full')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
@@ -60,9 +52,6 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
                 //
             ])
-            ->userMenu(true)
-            ->breadcrumbs(true)
-            // ->databaseNotifications()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,

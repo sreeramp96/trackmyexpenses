@@ -13,6 +13,15 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
 
+    protected static ?int $sort = 1;
+
+    protected int|string|array $columnSpan = 'full';
+
+    protected function getColumns(): int
+    {
+        return 2;
+    }
+
     protected function getStats(): array
     {
         $userId = Auth::id();
@@ -42,9 +51,6 @@ class StatsOverview extends BaseWidget
             Stat::make('Expenses', '₹'.number_format($expense, 2))
                 ->description('For selected period')
                 ->color('danger'),
-            Stat::make('Account Balance', '₹'.number_format($balance, 2))
-                ->description('Total across active accounts')
-                ->color('primary'),
         ];
     }
 }

@@ -29,6 +29,12 @@ class TemporaryTransactionResource extends Resource
 {
     protected static ?string $model = TemporaryTransaction::class;
 
+    protected static ?string $navigationLabel = 'Import Review';
+
+    protected static ?string $pluralLabel = 'Import Review';
+
+    protected static ?string $modelLabel = 'Staged Transaction';
+
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-document-magnifying-glass';
 
     protected static bool $shouldRegisterNavigation = false;
@@ -61,13 +67,49 @@ class TemporaryTransactionResource extends Resource
     {
         return $table
             ->headerActions([
+                Action::make('commitAll')
+                    ->label('Commit All')
+                    ->color('success')
+                    ->icon('heroicon-m-check-badge')
+                    ->requiresConfirmation()
+                    ->modalHeading('Commit All Staged Transactions')
+                    ->modalDescription('This will move all valid staged transactions to your main ledger. Continue?')
+                    ->action(function () {
+                        $records = TemporaryTransaction::where('user_id', Auth::id())->get();
+
+                        DB::transaction(function () use ($records) {
+                            foreach ($records as $record) {
+                                if (! $record->account_id || ! $record->transaction_date || ! $record->amount || ! $record->type) {
+                                    continue;
+                                }
+
+                                Transaction::create([
+                                    'user_id' => $record->user_id,
+                                    'account_id' => $record->account_id,
+                                    'category_id' => $record->category_id,
+                                    'type' => $record->type,
+                                    'amount' => $record->amount,
+                                    'note' => $record->note,
+                                    'transaction_date' => $record->transaction_date,
+                                    'reference_number' => $record->reference_number,
+                                ]);
+
+                                $record->delete();
+                            }
+                        });
+
+                        Notification::make()
+                            ->title('All transactions committed successfully.')
+                            ->success()
+                            ->send();
+                    }),
                 Action::make('clearStaging')
-                    ->label('Clear Staging Area')
+                    ->label('Clear Review Area')
                     ->color('danger')
                     ->icon('heroicon-m-x-circle')
                     ->requiresConfirmation()
                     ->action(fn () => TemporaryTransaction::where('user_id', Auth::id())->delete())
-                    ->after(fn () => Notification::make()->title('Staging area cleared.')->success()->send()),
+                    ->after(fn () => Notification::make()->title('Review area cleared.')->success()->send()),
             ])
             ->columns([
                 TextInputColumn::make('transaction_date')
@@ -176,9 +218,8 @@ class TemporaryTransactionResource extends Resource
                     ->requiresConfirmation()
                     ->action(fn (Collection $records) => $records->each->delete()),
             ])
-            ->emptyStateIcon('heroicon-o-inbox')
-            ->emptyStateHeading('Staging area is empty')
-            ->emptyStateDescription('Upload a CSV or PDF statement to stage transactions here.')
+            ->emptyStateHeading('No transactions to review.')
+            ->emptyStateDescription('Your review area is clean.')
             ->recordAction(null);
     }
 
