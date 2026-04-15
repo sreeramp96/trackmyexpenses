@@ -36,13 +36,13 @@ class StatsOverview extends BaseWidget
             ->sum('balance');
 
         return [
-            Stat::make('Income', '₹' . number_format($income, 2))
-                ->description(date('F Y', mktime(0, 0, 0, (int)$month, 1, (int)$year)))
+            Stat::make('Income', '₹'.number_format($income, 2))
+                ->description(date('F Y', mktime(0, 0, 0, (int) $month, 1, (int) $year)))
                 ->color('success'),
-            Stat::make('Expenses', '₹' . number_format($expense, 2))
+            Stat::make('Expenses', '₹'.number_format($expense, 2))
                 ->description('For selected period')
                 ->color('danger'),
-            Stat::make('Account Balance', '₹' . number_format($balance, 2))
+            Stat::make('Account Balance', '₹'.number_format($balance, 2))
                 ->description('Total across active accounts')
                 ->color('primary'),
         ];

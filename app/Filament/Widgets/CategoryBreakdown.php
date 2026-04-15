@@ -12,7 +12,7 @@ class CategoryBreakdown extends ChartWidget
     use InteractsWithPageFilters;
 
     protected ?string $heading = 'Monthly Category Breakdown';
-    
+
     protected ?string $maxHeight = '300px';
 
     protected function getData(): array
@@ -21,8 +21,8 @@ class CategoryBreakdown extends ChartWidget
         $year = $this->filters['year'] ?? now()->year;
 
         $service = app(TransactionService::class);
-        $data = $service->monthlyExpenseByCategory(Auth::id(), (int)$month, (int)$year);
-        
+        $data = $service->monthlyExpenseByCategory(Auth::id(), (int) $month, (int) $year);
+
         $labels = collect($data)->pluck('category')->toArray();
         $totals = collect($data)->pluck('total')->toArray();
         $colors = collect($data)->pluck('color')->toArray();

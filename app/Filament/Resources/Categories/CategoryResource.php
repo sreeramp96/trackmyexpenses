@@ -5,6 +5,12 @@ namespace App\Filament\Resources\Categories;
 use App\Filament\Resources\Categories\Pages\ManageCategories;
 use App\Models\Category;
 use BackedEnum;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -18,10 +24,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use UnitEnum;
-use Filament\Actions\ActionGroup;
-use Filament\Actions\DeleteAction;
-use Filament\Actions\EditAction;
-use Filament\Actions\ViewAction;
 
 class CategoryResource extends Resource
 {
@@ -53,8 +55,9 @@ class CategoryResource extends Resource
                     ->required(),
                 Select::make('parent_id')
                     ->label('Parent Category')
-                    ->relationship('parent', 'name', fn(Builder $query) => $query->where('user_id', Auth::id())->orWhereNull('user_id'))
+                    ->relationship('parent', 'name', fn (Builder $query) => $query->where('user_id', Auth::id())->orWhereNull('user_id'))
                     ->searchable()
+                    ->native(false)
                     ->placeholder('None'),
                 ColorPicker::make('color')
                     ->default('#64748b'),
@@ -73,13 +76,13 @@ class CategoryResource extends Resource
                     ->weight('bold'),
                 TextColumn::make('type')
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'expense' => 'danger',
                         'income' => 'success',
                         'transfer' => 'info',
                         default => 'gray',
                     })
-                    ->formatStateUsing(fn(string $state): string => ucfirst($state)),
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state)),
                 TextColumn::make('parent.name')
                     ->label('Parent')
                     ->placeholder('—'),
@@ -101,12 +104,12 @@ class CategoryResource extends Resource
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),
+            ])
+            ->bulkActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
-        // ->bulkActions([
-        //     \Filament\Tables\Actions\BulkActionGroup::make([
-        //         \Filament\Tables\Actions\DeleteBulkAction::make(),
-        //     ]),
-        // ]);
     }
 
     public static function getPages(): array

@@ -3,6 +3,7 @@
 namespace App\Observers;
 
 use App\Models\Account;
+use App\Models\Debt;
 use App\Models\Transaction;
 use App\Services\DebtService;
 use Illuminate\Support\Facades\DB;
@@ -72,7 +73,7 @@ class TransactionObserver
     private function syncDebt(?int $debtId): void
     {
         if ($debtId) {
-            $debt = \App\Models\Debt::find($debtId);
+            $debt = Debt::find($debtId);
             if ($debt) {
                 app(DebtService::class)->syncRemainingAmount($debt);
             }

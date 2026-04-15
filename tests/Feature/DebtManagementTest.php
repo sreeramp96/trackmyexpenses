@@ -2,9 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\DebtManager;
+use App\Livewire\TransactionFormModal;
+use App\Models\Account;
 use App\Models\Debt;
 use App\Models\User;
-use App\Models\Account;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -32,7 +34,7 @@ class DebtManagementTest extends TestCase
     public function test_can_create_debt()
     {
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\DebtManager::class)
+            ->test(DebtManager::class)
             ->set('contact_name', 'John Doe')
             ->set('direction', 'lent')
             ->set('amount', 1000)
@@ -53,7 +55,7 @@ class DebtManagementTest extends TestCase
         $debt = Debt::factory()->create(['user_id' => $this->user->id]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\DebtManager::class)
+            ->test(DebtManager::class)
             ->call('openModal', $debt->id)
             ->set('contact_name', 'Updated Name')
             ->call('save')
@@ -71,7 +73,7 @@ class DebtManagementTest extends TestCase
         $debt = Debt::factory()->create(['user_id' => $this->user->id, 'is_settled' => false, 'remaining_amount' => 500]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\DebtManager::class)
+            ->test(DebtManager::class)
             ->call('settle', $debt->id);
 
         $this->assertDatabaseHas('debts', [
@@ -86,7 +88,7 @@ class DebtManagementTest extends TestCase
         $debt = Debt::factory()->create(['user_id' => $this->user->id]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\DebtManager::class)
+            ->test(DebtManager::class)
             ->call('delete', $debt->id);
 
         $this->assertSoftDeleted('debts', ['id' => $debt->id]);
@@ -100,12 +102,12 @@ class DebtManagementTest extends TestCase
             'direction' => 'lent',
             'amount' => 1000,
             'remaining_amount' => 1000,
-            'is_settled' => false
+            'is_settled' => false,
         ]);
 
         // We test that recording a payment transaction updates the debt via observer
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\TransactionFormModal::class)
+            ->test(TransactionFormModal::class)
             ->call('openModal', null, $debt->id)
             ->set('amount', 400)
             ->set('account_id', $account->id)
@@ -114,9 +116,9 @@ class DebtManagementTest extends TestCase
         $this->assertDatabaseHas('debts', [
             'id' => $debt->id,
             'remaining_amount' => 600,
-            'is_settled' => false
+            'is_settled' => false,
         ]);
-        
+
         $this->assertDatabaseHas('accounts', [
             'id' => $account->id,
             'balance' => 2400, // Income of 400 added to 2000

@@ -12,14 +12,14 @@ class AccountBalances extends BaseWidget
 {
     protected static ?int $sort = 2;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(
-                Account::where('user_id', Auth::id())
-                    ->where('is_active', true)
+            ->query(fn () => Account::query()
+                ->where('user_id', Auth::id())
+                ->where('is_active', true)
             )
             ->columns([
                 Tables\Columns\TextColumn::make('name')

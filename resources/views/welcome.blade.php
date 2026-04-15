@@ -93,7 +93,7 @@
                     </a>
                 @else
                     <a href="{{ route('login') }}"
-                       class="hidden sm:inline-flex items-center px-4 py-2 text-sm font-medium text-ink-2 hover:text-ink transition-colors">
+                       class="sm:inline-flex items-center px-4 py-2 text-sm font-medium text-ink-2 hover:text-ink transition-colors">
                         Login
                     </a>
                     <a href="{{ route('register') }}"

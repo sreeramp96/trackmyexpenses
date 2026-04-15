@@ -17,6 +17,7 @@ class ManageAccounts extends ManageRecords
             CreateAction::make()
                 ->mutateFormDataUsing(function (array $data): array {
                     $data['user_id'] = Auth::id();
+
                     return $data;
                 }),
         ];

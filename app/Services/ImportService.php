@@ -5,6 +5,7 @@ namespace App\Services;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 class ImportService
 {
@@ -50,7 +51,7 @@ class ImportService
 
         foreach ($rows as $index => $row) {
             $rowString = strtolower(implode(' ', array_filter($row)));
-            
+
             $matchCount = 0;
             foreach ($keywords as $word) {
                 if (str_contains($rowString, $word)) {
@@ -67,7 +68,7 @@ class ImportService
         }
 
         // If no header found, fallback to first non-empty row
-        if (!$found) {
+        if (! $found) {
             foreach ($rows as $index => $row) {
                 if (count(array_filter($row)) > 3) {
                     $headerRowIndex = $index;
@@ -79,18 +80,18 @@ class ImportService
         $headers = $rows[$headerRowIndex];
         $cleanHeaders = [];
         foreach ($headers as $i => $h) {
-            $cleanHeaders[$i] = !empty($h) ? trim($h) : "Column_" . ($i + 1);
+            $cleanHeaders[$i] = ! empty($h) ? trim($h) : 'Column_'.($i + 1);
         }
 
         $dataRows = array_slice($rows, $headerRowIndex + 1);
-        
+
         $formattedRows = [];
         foreach ($dataRows as $row) {
             $filtered = array_filter($row);
             if (count($filtered) > 0) {
                 $rowString = strtolower(implode(' ', $filtered));
                 // Skip footer/summary rows
-                if (!str_contains($rowString, 'statement summary') && !str_contains($rowString, 'total amount') && !str_contains($rowString, 'generated on')) {
+                if (! str_contains($rowString, 'statement summary') && ! str_contains($rowString, 'total amount') && ! str_contains($rowString, 'generated on')) {
                     $rowValues = array_slice($row, 0, count($cleanHeaders));
                     if (count($rowValues) < count($cleanHeaders)) {
                         $rowValues = array_pad($rowValues, count($cleanHeaders), null);
@@ -134,8 +135,9 @@ class ImportService
         // If it's a numeric date from Excel
         if (is_numeric($date)) {
             try {
-                return \PhpOffice\PhpSpreadsheet\Shared\Date::excelToDateTimeObject($date)->format('Y-m-d');
-            } catch (\Exception $e) {}
+                return Date::excelToDateTimeObject($date)->format('Y-m-d');
+            } catch (\Exception $e) {
+            }
         }
 
         try {
@@ -145,6 +147,7 @@ class ImportService
             if (preg_match('/[a-zA-Z]/', $date)) {
                 return Carbon::parse($date)->format('Y-m-d');
             }
+
             return Carbon::createFromFormat($format, $date)->format('Y-m-d');
         } catch (\Exception $e) {
             try {

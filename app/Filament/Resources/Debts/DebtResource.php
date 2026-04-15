@@ -7,6 +7,11 @@ use App\Models\Account;
 use App\Models\Debt;
 use App\Services\TransactionService;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -15,11 +20,6 @@ use Filament\Forms\Components\ToggleButtons;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ViewAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -58,12 +58,13 @@ class DebtResource extends Resource
                     ->required()
                     ->prefix('₹')
                     ->reactive()
-                    ->afterStateUpdated(fn($state, $set) => $set('remaining_amount', $state)),
+                    ->afterStateUpdated(fn ($state, $set) => $set('remaining_amount', $state)),
                 TextInput::make('remaining_amount')
                     ->numeric()
                     ->required()
                     ->prefix('₹'),
-                DatePicker::make('due_date'),
+                DatePicker::make('due_date')
+                    ->native(false),
                 TextInput::make('note')
                     ->maxLength(255),
                 Toggle::make('is_settled')
@@ -80,11 +81,11 @@ class DebtResource extends Resource
                     ->searchable(),
                 TextColumn::make('direction')
                     ->badge()
-                    ->color(fn(string $state): string => $state === 'lent' ? 'success' : 'danger')
-                    ->formatStateUsing(fn($state) => ucfirst($state)),
+                    ->color(fn (string $state): string => $state === 'lent' ? 'success' : 'danger')
+                    ->formatStateUsing(fn ($state) => ucfirst($state)),
                 TextColumn::make('remaining_amount')
                     ->money('INR')
-                    ->color(fn($record) => $record->isOverdue() ? 'danger' : 'gray'),
+                    ->color(fn ($record) => $record->isOverdue() ? 'danger' : 'gray'),
                 TextColumn::make('due_date')
                     ->date('M d, Y')
                     ->placeholder('No date'),
@@ -104,15 +105,17 @@ class DebtResource extends Resource
                         ->form([
                             Select::make('account_id')
                                 ->label('Payment Account')
-                                ->options(fn() => Account::where('user_id', Auth::id())->pluck('name', 'id'))
+                                ->native(false)
+                                ->options(fn () => Account::where('user_id', Auth::id())->pluck('name', 'id'))
                                 ->required(),
                             TextInput::make('amount')
                                 ->numeric()
                                 ->required()
-                                ->default(fn($record) => $record->remaining_amount)
+                                ->default(fn ($record) => $record->remaining_amount)
                                 ->prefix('₹'),
                             DatePicker::make('transaction_date')
                                 ->default(now())
+                                ->native(false)
                                 ->required(),
                         ])
                         ->action(function ($record, array $data) {
@@ -122,7 +125,7 @@ class DebtResource extends Resource
                                 'type' => $record->direction === 'lent' ? 'income' : 'expense',
                                 'amount' => $data['amount'],
                                 'transaction_date' => $data['transaction_date'],
-                                'note' => "Payment for debt: " . $record->contact_name,
+                                'note' => 'Payment for debt: '.$record->contact_name,
                                 'debt_id' => $record->id,
                             ]);
 
@@ -131,8 +134,8 @@ class DebtResource extends Resource
                                 ->success()
                                 ->send();
                         })
-                        ->visible(fn($record) => !$record->is_settled),
-                        ViewAction::make(),
+                        ->visible(fn ($record) => ! $record->is_settled),
+                    ViewAction::make(),
                     EditAction::make(),
                     DeleteAction::make(),
                 ]),

@@ -12,7 +12,7 @@ class SpendingTrend extends ChartWidget
     use InteractsWithPageFilters;
 
     protected ?string $heading = 'Daily Spending Trend';
-    
+
     protected ?string $maxHeight = '300px';
 
     protected function getData(): array
@@ -21,7 +21,7 @@ class SpendingTrend extends ChartWidget
         $year = $this->filters['year'] ?? now()->year;
 
         $service = app(TransactionService::class);
-        $trends = $service->dailyExpensesForMonth(Auth::id(), (int)$month, (int)$year);
+        $trends = $service->dailyExpensesForMonth(Auth::id(), (int) $month, (int) $year);
 
         return [
             'datasets' => [

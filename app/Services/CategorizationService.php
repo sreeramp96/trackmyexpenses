@@ -13,9 +13,9 @@ class CategorizationService
     protected array $rules = [
         'Salary' => ['salary', 'wages', 'payout'],
         'Food & Dining' => ['zomato', 'swiggy', 'restaurant', 'cafe', 'food', 'hotel', 'dining', 'lunch', 'dinner', 'breakfast'],
-        'Bills & Utilities' => ['kseb', 'electricity', 'water', 'internet', 'recharge', 'jio', 'airtel', 'vi', 'bill','BSNL', 'broaband'],
+        'Bills & Utilities' => ['kseb', 'electricity', 'water', 'internet', 'recharge', 'jio', 'airtel', 'vi', 'bill', 'BSNL', 'broaband'],
         'Transport' => ['uber', 'ola', 'fuel', 'petrol', 'diesel', 'metro', 'auto', 'train'],
-        'Shopping' => ['amazon', 'flipkart', 'myntra', 'grocery', 'big basket', 'supermarket', 'mall','swiggy instamart', 'instamart','blinkit'],
+        'Shopping' => ['amazon', 'flipkart', 'myntra', 'grocery', 'big basket', 'supermarket', 'mall', 'swiggy instamart', 'instamart', 'blinkit'],
         'Entertainment' => ['netflix', 'hotstar', 'prime video', 'cinema', 'theatre', 'game', 'steam'],
         'Education' => ['udemy', 'coursera', 'college', 'school', 'fees', 'book', 'stationary'],
         'Health' => ['hospital', 'pharmacy', 'medicine', 'clinic', 'doctor', 'lab', 'medplus'],

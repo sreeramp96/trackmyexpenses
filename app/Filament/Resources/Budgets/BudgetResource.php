@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources\Budgets;
 
-use App\Filament\Resources\Budgets\Pages;
 use App\Models\Budget;
 use BackedEnum;
-use UnitEnum;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -16,13 +20,14 @@ use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
+use UnitEnum;
 
 class BudgetResource extends Resource
 {
     protected static ?string $model = Budget::class;
 
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-chart-bar';
-    
+
     protected static string|UnitEnum|null $navigationGroup = 'Planning';
 
     public static function form(Schema $schema): Schema
@@ -33,6 +38,7 @@ class BudgetResource extends Resource
                     ->label('Category')
                     ->relationship('category', 'name', fn (Builder $query) => $query->where('user_id', Auth::id())->orWhereNull('user_id'))
                     ->required()
+                    ->native(false)
                     ->searchable(),
                 TextInput::make('amount')
                     ->numeric()
@@ -45,11 +51,14 @@ class BudgetResource extends Resource
                         'yearly' => 'Yearly',
                     ])
                     ->default('monthly')
+                    ->native(false)
                     ->required(),
                 DatePicker::make('start_date')
                     ->required()
+                    ->native(false)
                     ->default(now()->startOfMonth()),
-                DatePicker::make('end_date'),
+                DatePicker::make('end_date')
+                    ->native(false),
             ]);
     }
 
@@ -71,13 +80,16 @@ class BudgetResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                \Filament\Tables\Actions\EditAction::make(),
-                \Filament\Tables\Actions\DeleteAction::make(),
+            ->recordActions([
+                ActionGroup::make([
+                    ViewAction::make(),
+                    EditAction::make(),
+                    DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
-                \Filament\Tables\Actions\BulkActionGroup::make([
-                    \Filament\Tables\Actions\DeleteBulkAction::make(),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -88,7 +100,7 @@ class BudgetResource extends Resource
             'index' => Pages\ManageBudgets::route('/'),
         ];
     }
-    
+
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
