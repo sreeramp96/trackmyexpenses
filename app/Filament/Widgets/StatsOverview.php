@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Models\Account;
 use App\Models\Transaction;
+use App\Models\RecurringExpense;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
@@ -19,7 +20,7 @@ class StatsOverview extends BaseWidget
 
     protected function getColumns(): int
     {
-        return 2;
+        return 3;
     }
 
     protected function getStats(): array
@@ -40,9 +41,10 @@ class StatsOverview extends BaseWidget
             ->whereYear('transaction_date', $year)
             ->sum('amount');
 
-        $balance = Account::where('user_id', $userId)
+        $recurring = RecurringExpense::where('user_id', $userId)
             ->where('is_active', true)
-            ->sum('balance');
+            ->where('frequency', 'monthly')
+            ->sum('amount');
 
         return [
             Stat::make('Income', '₹'.number_format($income, 2))
@@ -51,6 +53,10 @@ class StatsOverview extends BaseWidget
             Stat::make('Expenses', '₹'.number_format($expense, 2))
                 ->description('For selected period')
                 ->color('danger'),
+            Stat::make('Fixed Outflow', '₹'.number_format($recurring, 2))
+                ->description('Monthly subscriptions/bills')
+                ->color('info')
+                ->icon('heroicon-m-arrow-path'),
         ];
     }
 }
