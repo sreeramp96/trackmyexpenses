@@ -7,10 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Category extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, LogsActivity, SoftDeletes;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logAll()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     protected $fillable = [
         'user_id',
@@ -20,8 +30,6 @@ class Category extends Model
         'icon',
         'color',
     ];
-
-    // ── Relationships ──────────────────────────────────────
 
     public function user(): BelongsTo
     {
@@ -43,22 +51,8 @@ class Category extends Model
         return $this->hasMany(Transaction::class);
     }
 
-    public function budgets(): HasMany
-    {
-        return $this->hasMany(Budget::class);
-    }
-
-    // ── Scopes ─────────────────────────────────────────────
-
-    public function scopeSystem($query)
-    {
-        // Categories with no owner = system defaults
-        return $query->whereNull('user_id');
-    }
-
     public function scopeForUser($query, int $userId)
     {
-        // System defaults + user's own custom categories
         return $query->where(function ($q) use ($userId) {
             $q->whereNull('user_id')->orWhere('user_id', $userId);
         });

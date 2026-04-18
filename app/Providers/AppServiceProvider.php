@@ -46,6 +46,4 @@ class AppServiceProvider extends ServiceProvider
             date_default_timezone_set(auth()->user()->timezone);
         }
     }
-
-
 }

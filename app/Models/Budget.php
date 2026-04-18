@@ -5,8 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Budget extends Model
 {
@@ -29,13 +29,14 @@ class Budget extends Model
         'end_date',
     ];
 
-    protected $casts = [
-        'amount' => 'decimal:2',
-        'start_date' => 'date',
-        'end_date' => 'date',
-    ];
-
-    // ── Relationships ──────────────────────────────────────
+    protected function casts(): array
+    {
+        return [
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'amount' => 'decimal:2',
+        ];
+    }
 
     public function user(): BelongsTo
     {
@@ -47,36 +48,26 @@ class Budget extends Model
         return $this->belongsTo(Category::class);
     }
 
-    // ── Scopes ─────────────────────────────────────────────
-
-    public function scopeActiveForPeriod($query, int $month, int $year)
-    {
-        $periodStart = now()->setYear($year)->setMonth($month)->startOfMonth();
-        $periodEnd = $periodStart->copy()->endOfMonth();
-
-        //        return $query->where('start_date', '<=', now())
-        //            ->where(function ($q) {
-        //                $q->whereNull('end_date')
-        //                    ->orWhere('end_date', '>=', now());
-        //            });
-        return $query
-            ->where('start_date', '<=', $periodEnd)
-            ->where(function ($q) use ($periodStart) {
-                $q->whereNull('end_date')
-                    ->orWhere('end_date', '>=', $periodStart);
-            });
-    }
-
-    // ── Helpers ────────────────────────────────────────────
+    // ── Calculations ───────────────────────────────────────
 
     public function spentAmount(): float
     {
-        // Calculated in TransactionService — placeholder for relationship access
-        return Transaction::where('user_id', $this->user_id)
-            ->when($this->category_id, fn ($q) => $q->where('category_id', $this->category_id))
-            ->expense()
-            ->whereBetween('transaction_date', [$this->start_date, $this->end_date ?? now()])
-            ->sum('amount');
+        $query = Transaction::where('user_id', $this->user_id)
+            ->where('transaction_date', '>=', $this->start_date);
+
+        if ($this->end_date) {
+            $query->where('transaction_date', '<=', $this->end_date);
+        } else {
+            $query->where('transaction_date', '<=', $this->start_date->copy()->endOfMonth());
+        }
+
+        if ($this->category_id) {
+            $query->where('category_id', $this->category_id);
+        } else {
+            $query->where('type', 'expense');
+        }
+
+        return (float) $query->sum('amount');
     }
 
     public function remainingAmount(): float

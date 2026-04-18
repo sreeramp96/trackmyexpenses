@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Debt;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
@@ -115,8 +116,8 @@ class TransactionService
 
     private function clearDashboardCache(int $userId, $date): void
     {
-        $month = $date instanceof \Carbon\Carbon ? $date->month : (is_string($date) ? \Carbon\Carbon::parse($date)->month : $date->month);
-        $year = $date instanceof \Carbon\Carbon ? $date->year : (is_string($date) ? \Carbon\Carbon::parse($date)->year : $date->year);
+        $month = $date instanceof Carbon ? $date->month : (is_string($date) ? Carbon::parse($date)->month : $date->month);
+        $year = $date instanceof Carbon ? $date->year : (is_string($date) ? Carbon::parse($date)->year : $date->year);
 
         Cache::forget("dash:{$userId}:{$month}:{$year}");
     }
@@ -198,17 +199,17 @@ class TransactionService
             ->selectRaw('YEAR(transaction_date) as y, MONTH(transaction_date) as m, type, SUM(amount) as total')
             ->groupBy('y', 'm', 'type')
             ->get()
-            ->groupBy(fn($r) => $r->y . '-' . str_pad($r->m, 2, '0', STR_PAD_LEFT));
+            ->groupBy(fn ($r) => $r->y.'-'.str_pad($r->m, 2, '0', STR_PAD_LEFT));
 
         $data = [];
         for ($i = $months - 1; $i >= 0; $i--) {
             $date = now()->subMonths($i);
-            $key  = $date->year . '-' . str_pad($date->month, 2, '0', STR_PAD_LEFT);
+            $key = $date->year.'-'.str_pad($date->month, 2, '0', STR_PAD_LEFT);
             $bucket = $rows->get($key, collect());
 
             $data[] = [
-                'label'   => $date->format('M Y'),
-                'income'  => (float) ($bucket->firstWhere('type', 'income')?->total ?? 0),
+                'label' => $date->format('M Y'),
+                'income' => (float) ($bucket->firstWhere('type', 'income')?->total ?? 0),
                 'expense' => (float) ($bucket->firstWhere('type', 'expense')?->total ?? 0),
             ];
         }

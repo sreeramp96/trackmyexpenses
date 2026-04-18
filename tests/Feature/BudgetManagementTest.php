@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\BudgetManager;
 use App\Models\Budget;
 use App\Models\Category;
 use App\Models\User;
@@ -34,7 +35,7 @@ class BudgetManagementTest extends TestCase
         $category = Category::factory()->create(['user_id' => $this->user->id, 'type' => 'expense']);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\BudgetManager::class)
+            ->test(BudgetManager::class)
             ->set('categoryId', $category->id)
             ->set('amount', 3000)
             ->set('period', 'monthly')
@@ -55,7 +56,7 @@ class BudgetManagementTest extends TestCase
         $budget = Budget::factory()->create(['user_id' => $this->user->id]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\BudgetManager::class)
+            ->test(BudgetManager::class)
             ->call('openModal', $budget->id)
             ->set('amount', 4500)
             ->call('save')
@@ -73,7 +74,7 @@ class BudgetManagementTest extends TestCase
         $budget = Budget::factory()->create(['user_id' => $this->user->id]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\BudgetManager::class)
+            ->test(BudgetManager::class)
             ->call('delete', $budget->id);
 
         $this->assertDatabaseMissing('budgets', ['id' => $budget->id]);
@@ -82,13 +83,13 @@ class BudgetManagementTest extends TestCase
     public function test_can_navigate_months()
     {
         $component = Livewire::actingAs($this->user)
-            ->test(\App\Livewire\BudgetManager::class);
-            
+            ->test(BudgetManager::class);
+
         $currentMonth = $component->get('month');
-        
+
         $component->call('previousMonth');
         $this->assertEquals($currentMonth === 1 ? 12 : $currentMonth - 1, $component->get('month'));
-        
+
         $component->call('nextMonth');
         $this->assertEquals($currentMonth, $component->get('month'));
     }

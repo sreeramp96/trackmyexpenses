@@ -7,8 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Account extends Model
 {
@@ -43,14 +43,7 @@ class Account extends Model
 
     public function transactions(): HasMany
     {
-        // Transactions where this account is the SOURCE
-        return $this->hasMany(Transaction::class, 'account_id');
-    }
-
-    public function toTransactions(): HasMany
-    {
-        // Transactions where this account is the DESTINATION (transfers)
-        return $this->hasMany(Transaction::class, 'to_account_id');
+        return $this->hasMany(Transaction::class);
     }
 
     // ── Helpers ────────────────────────────────────────────

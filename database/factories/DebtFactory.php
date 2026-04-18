@@ -13,6 +13,7 @@ class DebtFactory extends Factory
     public function definition(): array
     {
         $amount = $this->faker->randomFloat(2, 100, 10000);
+
         return [
             'user_id' => User::factory(),
             'contact_name' => $this->faker->name(),

@@ -2,9 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\TransactionList;
+use App\Models\Account;
 use App\Models\Transaction;
 use App\Models\User;
-use App\Models\Account;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use Tests\TestCase;
@@ -42,7 +43,7 @@ class TransactionManagementTest extends TestCase
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\TransactionList::class)
+            ->test(TransactionList::class)
             ->set('search', 'Coffee')
             ->assertSee('Coffee with friends')
             ->assertDontSee('Monthly Rent');
@@ -63,7 +64,7 @@ class TransactionManagementTest extends TestCase
         ]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\TransactionList::class)
+            ->test(TransactionList::class)
             ->set('type', 'income')
             ->assertSee('Salary')
             ->assertDontSee('Grocery');
@@ -83,11 +84,11 @@ class TransactionManagementTest extends TestCase
         $this->assertEquals(900, $account->fresh()->balance);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\TransactionList::class)
+            ->test(TransactionList::class)
             ->call('deleteTransaction', $transaction->id);
 
         $this->assertSoftDeleted('transactions', ['id' => $transaction->id]);
-        
+
         // Verify balance was reversed
         $this->assertEquals(1000, $account->fresh()->balance);
     }

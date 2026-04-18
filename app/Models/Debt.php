@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Spatie\Activitylog\Support\LogOptions;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Debt extends Model
 {
@@ -39,18 +39,9 @@ class Debt extends Model
         'is_settled' => 'boolean',
     ];
 
-    // ── Relationships ──────────────────────────────────────
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    // ── Scopes ─────────────────────────────────────────────
-
-    public function scopeUnsettled($query)
-    {
-        return $query->where('is_settled', false);
     }
 
     public function scopeLent($query)
@@ -63,11 +54,15 @@ class Debt extends Model
         return $query->where('direction', 'borrowed');
     }
 
+    public function scopeUnsettled($query)
+    {
+        return $query->where('is_settled', false);
+    }
+
     public function scopeOverdue($query)
     {
         return $query->unsettled()
-            ->whereNotNull('due_date')
-            ->where('due_date', '<', now());
+            ->where('due_date', '<', now()->startOfDay());
     }
 
     // ── Helpers ────────────────────────────────────────────

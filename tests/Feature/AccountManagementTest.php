@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Livewire\AccountManager;
 use App\Models\Account;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,7 +32,7 @@ class AccountManagementTest extends TestCase
     public function test_can_create_account()
     {
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\AccountManager::class)
+            ->test(AccountManager::class)
             ->set('name', 'Savings Account')
             ->set('type', 'bank')
             ->set('balance', 5000)
@@ -52,7 +53,7 @@ class AccountManagementTest extends TestCase
         $account = Account::factory()->create(['user_id' => $this->user->id]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\AccountManager::class)
+            ->test(AccountManager::class)
             ->call('openModal', $account->id)
             ->set('name', 'Updated Name')
             ->call('save')
@@ -70,7 +71,7 @@ class AccountManagementTest extends TestCase
         $account = Account::factory()->create(['user_id' => $this->user->id]);
 
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\AccountManager::class)
+            ->test(AccountManager::class)
             ->call('delete', $account->id);
 
         $this->assertSoftDeleted('accounts', ['id' => $account->id]);
@@ -79,7 +80,7 @@ class AccountManagementTest extends TestCase
     public function test_validation_works()
     {
         Livewire::actingAs($this->user)
-            ->test(\App\Livewire\AccountManager::class)
+            ->test(AccountManager::class)
             ->set('name', '')
             ->call('save')
             ->assertHasErrors(['name' => 'required']);

@@ -19,6 +19,7 @@ class PdfImportService
 
         $transactions = collect();
         $catService = app(CategorizationService::class);
+        $importService = app(ImportService::class);
 
         // Typical HDFC line: 01/03/26 DESCRIPTION 1,234.56 0.00 10,000.00
         // This regex is a simplified heuristic for HDFC-like layouts
@@ -41,7 +42,7 @@ class PdfImportService
                 $amount = $deposit > 0 ? $deposit : $withdrawal;
 
                 $transactions->push([
-                    'transaction_date' => $this->parseDate($dateStr),
+                    'transaction_date' => $importService->parseDate($dateStr),
                     'note' => $description,
                     'type' => $type,
                     'amount' => $amount,
@@ -55,14 +56,6 @@ class PdfImportService
 
     private function parseDate(string $date): string
     {
-        try {
-            return Carbon::createFromFormat('d/m/y', $date)->format('Y-m-d');
-        } catch (\Exception $e) {
-            try {
-                return Carbon::createFromFormat('d/m/Y', $date)->format('Y-m-d');
-            } catch (\Exception $e2) {
-                return now()->format('Y-m-d');
-            }
-        }
+        return app(ImportService::class)->parseDate($date);
     }
 }
