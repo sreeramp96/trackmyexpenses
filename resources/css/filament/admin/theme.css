@@ -3,14 +3,12 @@
 @source '../../../../app/Filament/**/*';
 @source '../../../../resources/views/filament/**/*';
 
-/* --- Global Variable Architecture --- */
 :root {
     --c-bg-light: #f9f9f7;
     --c-bg-dark: #000000;
     --c-ink: #111111;
 }
 
-/* Light Mode: Absolute Zero Gray */
 html {
     --gray-50: 250, 250, 250;
     --gray-100: 244, 244, 245;
@@ -24,7 +22,6 @@ html {
     --gray-900: 0, 0, 0;
 }
 
-/* Dark Mode: AMOLED High-Vibrancy */
 html.dark {
     --gray-50: 255, 255, 255;
     --gray-100: 244, 244, 245;
@@ -38,7 +35,6 @@ html.dark {
     --gray-900: 39, 39, 42;
 }
 
-/* --- Core Styles --- */
 body {
     font-family: 'Bricolage Grotesque', sans-serif !important;
     -webkit-font-smoothing: antialiased;
@@ -53,9 +49,6 @@ body {
     background-color: var(--c-bg-dark) !important;
 }
 
-/* --- Visibility & Color Consistency --- */
-
-/* Default Text Colors */
 .fi-ta-text-item-label, .fi-header-heading, .fi-wi-stats-overview-stat-label {
     color: var(--c-ink) !important;
 }
@@ -65,27 +58,23 @@ body {
     font-weight: 700 !important;
 }
 
-/* Dark Mode Overrides */
-.dark .fi-ta-text-item-label, 
-.dark .fi-header-heading, 
+.dark .fi-ta-text-item-label,
+.dark .fi-header-heading,
 .dark .fi-wi-stats-overview-stat-label,
-.dark .fi-topbar-item-label, 
-.dark .fi-user-menu-item-label, 
+.dark .fi-topbar-item-label,
+.dark .fi-user-menu-item-label,
 .dark .fi-breadcrumbs-item-label {
     color: #ffffff !important;
 }
 
-/* Fix Chart & Graph Text Visibility */
 canvas {
     filter: none !important;
 }
 
 .dark canvas {
-    /* If Chart.js uses gray variables for ticks, we already forced gray-500 to white above */
     opacity: 1 !important;
 }
 
-/* Fix Dropdown Transparency (Solid Backgrounds Only) */
 .fi-dropdown-panel {
     background-color: #ffffff !important;
     opacity: 1 !important;
@@ -94,12 +83,11 @@ canvas {
 }
 
 .dark .fi-dropdown-panel {
-    background-color: #080808 !important; /* Slightly off-black for depth */
+    background-color: #080808 !important;
     border: 1px solid #222222 !important;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
 }
 
-/* UI Surfaces */
 .fi-section, .fi-ta-ctn, .fi-wi-widget, .fi-card {
     box-shadow: none !important;
     border: 1px solid #e5e7eb !important;
@@ -112,7 +100,6 @@ canvas {
     background-color: #000000 !important;
 }
 
-/* Topbar Styles (Remove transparency here to prevent dropdown bleed) */
 .fi-topbar {
     background-color: #ffffff !important;
     border-bottom: 1px solid #eeeeee !important;
@@ -123,12 +110,10 @@ canvas {
     border-bottom: 1px solid #111111 !important;
 }
 
-/* Success/Danger Card Accents */
 .fi-wi-stats-overview-stat[style*="--c-600:var(--success-600)"] { border-left: 5px solid rgb(34, 197, 94) !important; }
 .fi-wi-stats-overview-stat[style*="--c-600:var(--danger-600)"] { border-left: 5px solid rgb(239, 68, 68) !important; }
 .fi-wi-stats-overview-stat[style*="--c-600:var(--info-600)"] { border-left: 5px solid rgb(59, 130, 246) !important; }
 
-/* Sidebar */
 .fi-sidebar-item-button:hover {
     background-color: rgba(59, 130, 246, 0.1) !important;
     color: rgb(59, 130, 246) !important;

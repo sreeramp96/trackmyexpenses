@@ -132,6 +132,8 @@ class ImportService
             return now()->format('Y-m-d');
         }
 
+        $date = trim($date);
+
         // If it's a numeric date from Excel
         if (is_numeric($date)) {
             try {
@@ -140,21 +142,26 @@ class ImportService
             }
         }
 
-        try {
-            if (str_contains($date, '-')) {
-                return Carbon::parse($date)->format('Y-m-d');
-            }
-            if (preg_match('/[a-zA-Z]/', $date)) {
-                return Carbon::parse($date)->format('Y-m-d');
-            }
+        // Try provided format first, then common alternatives
+        $formats = [$format, 'd/m/y', 'd-m-Y', 'd-m-y', 'Y-m-d', 'm/d/Y', 'm/d/y'];
 
-            return Carbon::createFromFormat($format, $date)->format('Y-m-d');
-        } catch (\Exception $e) {
+        foreach ($formats as $f) {
             try {
-                return Carbon::parse($date)->format('Y-m-d');
-            } catch (\Exception $ex) {
-                return now()->format('Y-m-d');
+                $parsed = Carbon::createFromFormat($f, $date);
+                // Ensure year is reasonable (handle 2-digit year correctly)
+                if ($parsed->year < 100) {
+                    $parsed->year += 2000;
+                }
+                return $parsed->format('Y-m-d');
+            } catch (\Exception $e) {
+                continue;
             }
+        }
+
+        try {
+            return Carbon::parse($date)->format('Y-m-d');
+        } catch (\Exception $e) {
+            return now()->format('Y-m-d');
         }
     }
 }

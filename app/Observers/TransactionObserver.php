@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Debt;
 use App\Models\Transaction;
 use App\Services\DebtService;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
 class TransactionObserver
@@ -17,6 +18,7 @@ class TransactionObserver
     {
         DB::transaction(fn () => $this->applyEffect($transaction));
         $this->syncDebt($transaction->debt_id);
+        $this->clearDashboardCache($transaction);
     }
 
     /**
@@ -36,6 +38,16 @@ class TransactionObserver
         if ($transaction->wasChanged('debt_id')) {
             $this->syncDebt($transaction->getOriginal('debt_id'));
         }
+
+        $this->clearDashboardCache($transaction);
+        
+        // If date changed, clear cache for old date too
+        if ($transaction->wasChanged('transaction_date')) {
+            $oldDate = $transaction->getOriginal('transaction_date');
+            if ($oldDate) {
+                $this->clearDashboardCache($transaction, $oldDate);
+            }
+        }
     }
 
     /**
@@ -47,6 +59,7 @@ class TransactionObserver
             $this->reverseEffect($transaction->toArray());
         });
         $this->syncDebt($transaction->debt_id);
+        $this->clearDashboardCache($transaction);
     }
 
     /**
@@ -58,6 +71,7 @@ class TransactionObserver
             $this->applyEffect($transaction);
         });
         $this->syncDebt($transaction->debt_id);
+        $this->clearDashboardCache($transaction);
     }
 
     /**
@@ -70,14 +84,23 @@ class TransactionObserver
 
     // ── Private Helpers ────────────────────────────────────
 
-    private function syncDebt(?int $debtId): void
+    private function clearDashboardCache(Transaction $transaction, $overrideDate = null): void
     {
-        if ($debtId) {
-            $debt = Debt::find($debtId);
-            if ($debt) {
-                app(DebtService::class)->syncRemainingAmount($debt);
+        $userId = $transaction->user_id;
+        $date = $overrideDate ?? $transaction->transaction_date;
+        
+        if (! $date instanceof \Carbon\Carbon) {
+            try {
+                $date = \Carbon\Carbon::parse($date);
+            } catch (\Exception $e) {
+                return;
             }
         }
+
+        $month = $date->month;
+        $year = $date->year;
+
+        Cache::forget("dash:{$userId}:{$month}:{$year}");
     }
 
     private function applyEffect(Transaction $tx): void

@@ -8,9 +8,8 @@ use App\Models\Debt;
 use App\Models\RecurringExpense;
 use App\Models\Transaction;
 use App\Models\User;
-use Illuminate\Database\Seeder;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Seeder;
 
 class DemoUserSeeder extends Seeder
 {
@@ -27,7 +26,7 @@ class DemoUserSeeder extends Seeder
                 'email' => 'demo@demo.com',
                 'currency' => 'INR',
                 'timezone' => 'Asia/Kolkata',
-                'password' => bcrypt('password'), 
+                'password' => bcrypt('password'),
             ]
         );
 
@@ -66,7 +65,7 @@ class DemoUserSeeder extends Seeder
             'user_id' => $userId,
             'name' => 'HDFC Savings',
             'type' => 'bank',
-            'balance' => 0, 
+            'balance' => 0,
             'currency' => 'INR',
             'is_active' => true,
         ]);
