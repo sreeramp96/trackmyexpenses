@@ -122,9 +122,6 @@ class CategoryResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery()
-            ->where(function ($query) {
-                $query->where('user_id', Auth::id())
-                    ->orWhereNull('user_id');
-            });
+            ->where('user_id', Auth::id());
     }
 }

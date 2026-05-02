@@ -23,15 +23,18 @@ class CategorySeeder extends Seeder
             ['name' => 'Food & Dining', 'type' => 'expense', 'icon' => 'utensils', 'color' => '#f97316'],
             ['name' => 'Transport', 'type' => 'expense', 'icon' => 'car', 'color' => '#fb923c'],
             ['name' => 'Shopping', 'type' => 'expense', 'icon' => 'shopping-bag', 'color' => '#f43f5e'],
+            ['name' => 'Grocery & Stationery', 'type' => 'expense', 'icon' => 'minus', 'color' => '#94a3b8'],
             ['name' => 'Bills & Utilities', 'type' => 'expense', 'icon' => 'zap', 'color' => '#eab308'],
             ['name' => 'Health', 'type' => 'expense', 'icon' => 'heart', 'color' => '#ef4444'],
             ['name' => 'Entertainment', 'type' => 'expense', 'icon' => 'film', 'color' => '#a855f7'],
             ['name' => 'Education', 'type' => 'expense', 'icon' => 'book-open', 'color' => '#3b82f6'],
             ['name' => 'Rent & Housing', 'type' => 'expense', 'icon' => 'home', 'color' => '#64748b'],
             ['name' => 'Other Expense', 'type' => 'expense', 'icon' => 'minus', 'color' => '#94a3b8'],
+            ['name' => 'Fuel Expenses', 'type' => 'expense', 'icon' => 'minus', 'color' => '#94a3b8'],
 
             // Transfer
             ['name' => 'Account Transfer', 'type' => 'transfer', 'icon' => 'repeat', 'color' => '#06b6d4'],
+
         ];
 
         foreach ($categories as $cat) {

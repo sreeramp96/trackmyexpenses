@@ -52,7 +52,7 @@ return [
     |
     */
 
-    'url' => 'https://trackmyexpenses.test',
+    'url' => env('APP_URL', 'http://localhost'),
 
     /*
     |--------------------------------------------------------------------------

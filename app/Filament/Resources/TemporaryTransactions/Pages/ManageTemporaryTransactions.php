@@ -62,7 +62,12 @@ class ManageTemporaryTransactions extends ManageRecords
                 ->requiresConfirmation()
                 ->action(fn () => TemporaryTransaction::where('user_id', Auth::id())->delete())
                 ->after(fn () => Notification::make()->title('Review area cleared.')->success()->send()),
-            CreateAction::make(),
+            CreateAction::make()
+                ->mutateFormDataUsing(function (array $data): array {
+                    $data['user_id'] = Auth::id();
+
+                    return $data;
+                }),
         ];
     }
 }

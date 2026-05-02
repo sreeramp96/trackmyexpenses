@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\Debt;
 use App\Models\Transaction;
 use App\Services\DebtService;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 
@@ -40,7 +41,7 @@ class TransactionObserver
         }
 
         $this->clearDashboardCache($transaction);
-        
+
         // If date changed, clear cache for old date too
         if ($transaction->wasChanged('transaction_date')) {
             $oldDate = $transaction->getOriginal('transaction_date');
@@ -84,14 +85,24 @@ class TransactionObserver
 
     // ── Private Helpers ────────────────────────────────────
 
+    private function syncDebt(?int $debtId): void
+    {
+        if ($debtId) {
+            $debt = Debt::find($debtId);
+            if ($debt) {
+                app(DebtService::class)->syncRemainingAmount($debt);
+            }
+        }
+    }
+
     private function clearDashboardCache(Transaction $transaction, $overrideDate = null): void
     {
         $userId = $transaction->user_id;
         $date = $overrideDate ?? $transaction->transaction_date;
-        
-        if (! $date instanceof \Carbon\Carbon) {
+
+        if (! $date instanceof Carbon) {
             try {
-                $date = \Carbon\Carbon::parse($date);
+                $date = Carbon::parse($date);
             } catch (\Exception $e) {
                 return;
             }
