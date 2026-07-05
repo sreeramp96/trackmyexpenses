@@ -197,11 +197,6 @@
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <div class="space-y-8">
                     <div class="space-y-4 opacity-0 animate-fadeInUp">
-                        <div
-                            class="inline-flex items-center gap-2 px-3 py-1.5 bg-finance-green-bg border border-finance-green-border rounded-full text-xs font-medium text-finance-green">
-                            <span class="w-2 h-2 bg-finance-green rounded-full animate-pulse-subtle"></span>
-                            Smart Finance Management
-                        </div>
                         <h1 class="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight leading-tight">
                             Take Control of Your
                             <span class="gradient-text">Finances</span>
